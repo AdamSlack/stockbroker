@@ -23,7 +23,19 @@ class Trade:
         xml += '<owner>' + self.owner + '</owner>'
         xml += '</trade>'
         return xml
+    
+    def __eq__(self, trade):
+        """ check if another trade is the same trade. """
 
+        if isinstance(trade, self.__class__):
+            stock = self.stock_id == self.stock_id 
+            shares = self.available_shares == trade.available_shares
+            name = self.company_name = trade.company_name
+            owner = self.owner == trade.owner
+            price = self.price == trade.price
+            return  stock and shares and name and owner and price
+        else:
+            return False
 
 class Price:
     """ Price """
@@ -40,6 +52,13 @@ class Price:
         xml += '<value>' + str(self.value) + '</value>'
         xml += '</price>'
         return xml
+
+    def __eq__(self, price):
+        if isinstance(price, self.__class__):
+            return self.value == price.value and self.currency == price.currency
+        else:
+            return False
+
 
 
 class Trades:
@@ -61,9 +80,23 @@ class Trades:
         """ XMLise and save file, checking if valid xml bethod hand"""
         with open(path, 'w') as f:
             f.write(self.xmlise())
-        
+    
+    def add_trade(self, trade):
+        """ check if a trade exists and add it."""
+        for idx, t in enumerate(self.trades):
+            if t == trade:
+                self.trades[idx].available_shares += trade.available_shares
+                return True
+        self.trades.append(trade)
+        return True
 
-        
+    def remove_trade(self, trade):
+        """ remove trade from the block """
+        for idx, t in enumerate(self.trades):
+            if t == trade:
+                del self.trades[idx]
+                return True
+        return False
 
 class XMLParser:
     """ XMLParser """
