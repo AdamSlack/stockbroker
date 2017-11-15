@@ -1,6 +1,6 @@
 import xmlschema
 from pprint import pprint
-
+import copy
 
 class Trade:
     """ Trade """
@@ -30,12 +30,34 @@ class Trade:
         if isinstance(trade, self.__class__):
             stock = self.stock_id == self.stock_id 
             shares = self.available_shares == trade.available_shares
-            name = self.company_name = trade.company_name
+            name = self.company_name == trade.company_name
             owner = self.owner == trade.owner
             price = self.price == trade.price
             return  stock and shares and name and owner and price
         else:
             return False
+
+    def same_owner_stock_price(self, trade):
+        """ check if stock is the same on everything but available shares. """
+        if isinstance(trade, self.__class__):
+            stock = self.stock_id == trade.stock_id 
+            name = self.company_name == trade.company_name
+            owner = self.owner == trade.owner
+            price = self.price == trade.price
+            return  stock and name and owner and price
+        else:
+            return False
+    
+    def __str__(self):
+        """ print to string """
+
+        string = 'stock ID: ' + self.stock_id 
+        string += ' company name: ' + self.company_name
+        string += ' available shares: ' + str(self.available_shares)
+        string += ' owner: ' + self.owner
+        return string
+
+
 
 class Price:
     """ Price """
@@ -84,19 +106,29 @@ class Trades:
     def add_trade(self, trade):
         """ check if a trade exists and add it."""
         for idx, t in enumerate(self.trades):
-            if t == trade:
+            if t.same_owner_stock_price(trade):
                 self.trades[idx].available_shares += trade.available_shares
                 return True
-        self.trades.append(trade)
+        self.trades.append(copy.deepcopy(trade))
         return True
 
     def remove_trade(self, trade):
         """ remove trade from the block """
         for idx, t in enumerate(self.trades):
+
             if t == trade:
                 del self.trades[idx]
                 return True
+
+            if t.same_owner_stock_price(trade) and t.available_shares <= trade.available_shares:
+                self.trades[idx].available_shares -= trade.available_shares
+                print(self.trades[idx].available_shares)
+                if t.available_shares == 0:
+                    del self.trades[idx]
+                return True
+
         return False
+
 
 class XMLParser:
     """ XMLParser """
@@ -129,16 +161,38 @@ class XMLParser:
     def validate(self, path):
         return self.xs.is_valid(path)
 
+
+def validate_test_xml(xp, path):
+    if xp.validate(path):
+        print('XML Validated Successfully.')
+    else:
+        print('XML Failed Validation')
+
+
 def main():
     """ main """
     xp = XMLParser('./companyStockSchema/CompanyStock.xsd')
     trades = xp.parse_xml('./trades/trades.xml')
     trades.save_trades('./trades/test.xml')
-    if xp.validate('./trades/test.xml'):
-        print('XML Validated Successfully.')
-    else:
-        print('XML Failed Validation')
+    validate_test_xml(xp, './trades/test.xml')
+    p1 = Price(10, 'USD')
+    t1 = Trade('Amgen', 'AMG', 10, p1, 'A.S.')
 
+    trades.remove_trade(t1) # returns false
+    trades.add_trade(t1) # returns true
+    trades.save_trades('./trades/test.xml') 
+    validate_test_xml(xp, './trades/test.xml')
+
+    trades.remove_trade(t1) # returns true
+    trades.save_trades('./trades/test1.xml')
+    validate_test_xml(xp, './trades/test1.xml')
+
+    trades.add_trade(t1) # returns true
+    trades.add_trade(t1) # returns true
+    trades.add_trade(t1) # returns true
+    trades.add_trade(t1) # returns true
+    trades.save_trades('./trades/test2.xml')
+    validate_test_xml(xp, './trades/test2.xml')
 
 
 if __name__ == '__main__':
