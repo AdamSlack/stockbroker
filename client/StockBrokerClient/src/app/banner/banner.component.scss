@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400');
+
+.banner {
+    display: inline-block;
+    width: 100%;
+    background: #222277;
+    color: #fff;
+    font-family: 'Roboto', sans-serif;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+    .title {
+        font-size: 24px;
+        float: left;
+        padding: 10px;
+    }
+
+    .link {
+        font-size: 18px;        
+        float: right;
+        padding: 15px;
+        height: 100%;
+        &:hover {
+            background: #222255;
+            transition: background-color 0.2s ease;
+        }
+    }
+}
