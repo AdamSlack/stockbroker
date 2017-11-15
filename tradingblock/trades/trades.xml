@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<cs:trades xmlns:cs="CompanyStock">
+    <trade>
+        <companyName>Amgen</companyName>
+        <stockID>AMG</stockID>
+        <availableShares>100</availableShares>
+        <price>
+            <currency>USD</currency>
+            <value>100.00</value>
+        </price>
+        <owner>AdamSlack</owner>
+    </trade>
+    <trade>
+        <companyName>Amgen</companyName>
+        <stockID>AMG</stockID>
+        <availableShares>100</availableShares>
+        <price>
+            <currency>USD</currency>
+            <value>100.00</value>
+        </price>
+        <owner>SlackAdam</owner>
+    </trade>
+</cs:trades>

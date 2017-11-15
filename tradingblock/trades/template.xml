@@ -1,0 +1,9 @@
+<companyStock>
+    <name> </name>
+    <stockID> </stockID>
+    <availableShares> </availableShares>
+    <price>
+        <currency> </currency>
+        <value> </value>
+    </price>
+</companyStock>
