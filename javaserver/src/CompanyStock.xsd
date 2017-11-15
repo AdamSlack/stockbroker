@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+ 		targetNamespace="CompanyStock"
+ 		xmlns:tns="CompanyStock"
+ 		elementFormDefault="qualified">
+ 
+	<complexType name="companyStock">
+		<sequence>
+			<element name="companyName" 	type="string" 			maxOccurs="1" minOccurs="1" />
+			<element name="stockID" 		type="string" 			maxOccurs="1" minOccurs="1" />
+			<element name="availableShares" type="integer" 			maxOccurs="1" minOccurs="1" />
+			<element name="price" 			type="tns:sharePrice"	maxOccurs="1" minOccurs="1" />
+		</sequence>
+	</complexType>
+ 		
+ 	<complexType name="sharePrice">
+		<sequence>
+			<element name="currency" 		type="string" 			maxOccurs="1" minOccurs="1" />
+			<element name="value" 			type="decimal"  		maxOccurs="1" minOccurs="1" />
+		</sequence>
+	</complexType>
+
+	<complexType name="CompanyStockHistory">
+		<sequence>
+			<element name="datapoints"		type="tns:timeSeries" 	maxOccurs="unbounded" 	minOccurs="0" />
+			<element name="granularity"		type="string"			maxOccurs="1" 			minOccurs="1" />
+			<element name="stockID"			type="string"			maxOccurs="1" 			minOccurs="1" />
+		</sequence>
+	</complexType>
+
+	<complexType name="timeSeries">
+		<sequence>
+			<element name="timestamp" 		type="dateTime" />
+			<element name="open" 			type="decimal"  />
+			<element name="high" 			type="decimal"  />
+			<element name="low" 			type="decimal"  />
+			<element name="close" 			type="decimal"  />
+			<element name="volume" 			type="integer"  />
+		</sequence>
+	</complexType>
+	
+
+</schema>
+
