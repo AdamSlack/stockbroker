@@ -1,12 +1,18 @@
 'use-strict';
 
 const express = require('express');
-var request = require('request');
+const request = require('request');
+const cors = require('cors');
+
 const APIKEY = "EN5TVUAQ24R3A67K";
 
 
 var stockBroker = express();
-
+stockBroker.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
 stockBroker.get('/', (req, res) => {
     res.send('Hello World');
 });
@@ -36,7 +42,7 @@ stockBroker.get('/stockbroker', (req, res) => {
         if (response && response.statusCode) {
             console.log(response.statusCode);
             console.log(body);
-            results.body = JSON.parse(body);
+            results.data = JSON.parse(body);
         }
         res.send(JSON.stringify(results, null, 2));        
     });

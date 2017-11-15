@@ -5,7 +5,7 @@ import {StockQueryService} from '../services/stock-query.service';
 @Component({
   selector: 'app-stock-viewer',
   templateUrl: './stock-viewer.component.html',
-  styleUrls: ['./stock-viewer.component.css']
+  styleUrls: ['./stock-viewer.component.scss']
 })
 export class StockViewerComponent implements OnInit {
 
@@ -15,8 +15,7 @@ export class StockViewerComponent implements OnInit {
 
   ngOnInit() {
     this.stockQuery.requestStock('AMG', 'TIME_SERIES_DAILY').then((res) => {
-      console.log(res);
-      this.stock = JSON.stringify(res);
+      this.stock = JSON.stringify(res['data']['Meta Data']);
     });
   }
 
