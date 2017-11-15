@@ -1,6 +1,8 @@
 import xmlschema
 from pprint import pprint
 import copy
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from urllib.parse import urlparse
 
 class Trade:
     """ Trade """
@@ -115,7 +117,6 @@ class Trades:
     def remove_trade(self, trade):
         """ remove trade from the block """
         for idx, t in enumerate(self.trades):
-
             if t == trade:
                 del self.trades[idx]
                 return True
@@ -129,6 +130,9 @@ class Trades:
 
         return False
 
+    def find_trades(self, stock_id):
+        """ returns all stock matching on stock id """
+        return [t for t in self.trades if t.stock_id == stock_id]
 
 class XMLParser:
     """ XMLParser """
@@ -169,30 +173,46 @@ def validate_test_xml(xp, path):
         print('XML Failed Validation')
 
 
+class TradingBlock(BaseHTTPRequestHandler):
+
+    def __init__(self, request, client_address, server):
+        self.xsd = './companyStockSchema/CompanyStock.xsd'
+        self.xml = './trades/trades.xml'
+        self.xp = XMLParser(self.xsd)
+        self.trades = self.xp.parse_xml(self.xml)
+        super().__init__(request, client_address, server)
+    
+    def add_trade(self, trade):
+        self.trades.add_trade(trade)
+        self.trades.save_trades(self.xml)
+
+    def remove_trade(self, trade):
+        self.trades.remove_trade(trade)
+        self.trades.save_trades(self.xml)
+
+    def find_trades(self, stock_id):
+        res = self.trades.find_trades(stock_id)
+
+    def do_GET(self):
+        self.send_response(200)
+        # Send headers
+        self.send_header('Content-type','text/html')
+        self.end_headers()
+ 
+        # Send message back to client
+        message = "Hello world!"
+        # Write content as utf-8 data
+
+        url = urlparse(self.path)
+        #self.wfile.write(bytes(url, "utf8"))
+        self.wfile.write(bytes(url.geturl(), "utf8"))
+        return
+
 def main():
     """ main """
-    xp = XMLParser('./companyStockSchema/CompanyStock.xsd')
-    trades = xp.parse_xml('./trades/trades.xml')
-    trades.save_trades('./trades/test.xml')
-    validate_test_xml(xp, './trades/test.xml')
-    p1 = Price(10, 'USD')
-    t1 = Trade('Amgen', 'AMG', 10, p1, 'A.S.')
-
-    trades.remove_trade(t1) # returns false
-    trades.add_trade(t1) # returns true
-    trades.save_trades('./trades/test.xml') 
-    validate_test_xml(xp, './trades/test.xml')
-
-    trades.remove_trade(t1) # returns true
-    trades.save_trades('./trades/test1.xml')
-    validate_test_xml(xp, './trades/test1.xml')
-
-    trades.add_trade(t1) # returns true
-    trades.add_trade(t1) # returns true
-    trades.add_trade(t1) # returns true
-    trades.add_trade(t1) # returns true
-    trades.save_trades('./trades/test2.xml')
-    validate_test_xml(xp, './trades/test2.xml')
+    server = HTTPServer(('localhost', 8080), TradingBlock)
+    print('Starting server at http://localhost:8080')
+    server.serve_forever()
 
 
 if __name__ == '__main__':
