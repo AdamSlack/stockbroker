@@ -1,4 +1,5 @@
-<input class="bar" type="text" placeholder="Search for a stock.">
+<input class="bar" type="text"  [(ngModel)]=query (keyup)=search() placeholder="Search for a stock.">
 <div> 
-  {{stock}}
+  <pre>{{stock}}</pre>
 </div>
+

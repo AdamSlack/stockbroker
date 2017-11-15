@@ -7,13 +7,13 @@ input {
     font-weight: 400;
     box-sizing: border-box;
     border: none;
-    border-bottom: 2px solid #227722;
-    background: #222;
-    color: #ddd;
+    border-bottom: 2px solid #222277;
+    background: #fff;
+    color: #222222;
     transition: 0.2s;
     &:focus {
         outline: none;
-        border-bottom: 2px solid #398d39;
+        border-bottom: 2px solid #444477;
         transition: 0.2s;
     }
     .icon .bar {

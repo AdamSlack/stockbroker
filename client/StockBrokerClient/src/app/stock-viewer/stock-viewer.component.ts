@@ -12,11 +12,15 @@ export class StockViewerComponent implements OnInit {
   constructor(private stockQuery : StockQueryService) { }
 
   public stock : any = 'STOCK BE HERE';
+  public query : string;
+  public search() {
+    this.stockQuery.requestStock(this.query, 'TIME_SERIES_DAILY').then((res) => {
+      this.stock = JSON.stringify(res['data'], null, 2);
+    });
+  }
 
   ngOnInit() {
-    this.stockQuery.requestStock('AMG', 'TIME_SERIES_DAILY').then((res) => {
-      this.stock = JSON.stringify(res['data']['Meta Data']);
-    });
+    
   }
 
 }
