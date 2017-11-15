@@ -20,7 +20,9 @@ stockBroker.get('/stockbroker', (req, res) => {
     
     response = {
         'stockID': stockID,
-        'granularity': granularity
+        'granularity': granularity,
+        'url' : "https://www.alphavantage.co/query?function=" + granularity + "&symbol="+ companyID +"&apikey="+ APIKEY +"&datatype=json"
+        
     }
 
     res.send(JSON.stringify(response, null, 2));
