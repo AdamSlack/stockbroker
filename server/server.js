@@ -35,9 +35,9 @@ stockBroker.get('/stockbroker', (req, res) => {
         }
         if (response && response.statusCode) {
             console.log(response.statusCode);
+            console.log(body);
+            results.body = JSON.parse(body);
         }
-        console.log(body);
-        results.body = JSON.parse(body);
         res.send(JSON.stringify(results, null, 2));        
     });
     
