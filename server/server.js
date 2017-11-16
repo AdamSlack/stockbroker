@@ -54,7 +54,7 @@ stockBroker.get('/tradingblock/trades/:stockID?', (req, res) => {
 stockBroker.get('/stockbroker/:granularity/:stockID', (req, res) => {
     var stockID = req.params.stockID;
     var granularity = req.params.granularity;
-    var url = ALPHAVANTAGE + '/query?function=" + granularity + "&symbol="+ stockID +"&apikey="+ APIKEY +"&datatype=json';
+    var url = ALPHAVANTAGE + '/query?function=' + granularity + '&symbol='+ stockID +'&apikey='+ APIKEY + '&datatype=json';
     
     var results = {
         'stockID': stockID,
