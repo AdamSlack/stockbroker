@@ -232,16 +232,19 @@ class TradingBlock(BaseHTTPRequestHandler):
         components = url.lower().strip('/').split('/')
         comp_len = len(components)
         if comp_len == 0 or comp_len > 2:
-            self.send_response(200)
+            self.send_response(400)
             return 'INVALID URL RECIEVED'
         
         if components[0] != 'trades':
+            self.send_response(400)
             return 'INVALID URL RECIEVED'    
 
         if comp_len == 1 :
             json_obj = json.loads(self.trades.jsonise(trades = None))
+            self.send_response(200)
             return  json.dumps(json_obj, indent=2)
         
+        self.send_response(200)
         json_obj = json.loads(self.trades.jsonise(self.trades.find_trades(components[1])))
         return  json.dumps(json_obj, indent=2)
 
@@ -251,12 +254,14 @@ class TradingBlock(BaseHTTPRequestHandler):
 
 
     def do_GET(self):
-        self.send_header('Content-type','application/json')
-        self.end_headers()
+        
 
         url = urlparse(self.path)
         output = self.process_GET(url.geturl())
 
+        self.send_header('content-type','application/json')
+        self.end_headers()
+        
         self.wfile.write(bytes(output + '\n', "utf8"))
         return
 
@@ -274,8 +279,8 @@ class TradingBlock(BaseHTTPRequestHandler):
 
 def main():
     """ main """
-    server = HTTPServer(('localhost', 8080), TradingBlock)
-    print('Starting server at http://localhost:8080')
+    server = HTTPServer(('localhost', 8081), TradingBlock)
+    print('Starting server at http://localhost:8081')
     server.serve_forever()
 
 
