@@ -1,10 +1,21 @@
 <input class="bar" type="text"  [(ngModel)]=query (keyup)=search() placeholder="Search for a stock.">
 
-<div class="results"> 
-  <pre>{{stock}}</pre>          
+<div class="stock-data">
+  <div> DATES </div> 
+  <pre>{{dates}}</pre>          
 </div>
 
-<div class="results">
+<div class="stock-data">
+  <div> OPEN </div> 
+  <pre>{{open}}</pre>          
+</div>
+
+<div class="stock-data">
+  <div> CLOSE </div>
+  <pre>{{close}}</pre>          
+</div>
+
+<div class="trades">
   <pre>{{trades}}</pre>          
 </div>
 
