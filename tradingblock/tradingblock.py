@@ -3,6 +3,7 @@ from pprint import pprint
 import copy
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse
+import json
 
 class Trade:
     """ Trade """
@@ -26,6 +27,17 @@ class Trade:
         xml += '</trade>'
         return xml
     
+    def jsonise(self):
+        """ convert class into json """
+        string = '{' + ''
+        string += '"companyName": "' + self.company_name + '",'
+        string += '"stockID": "' + self.company_name + '",'
+        string += '"availableShares": "' + str(self.available_shares) + '",'
+        string += '"owner": "' + self.owner + '",'
+        string += '"price": ' + self.price.jsonise() + ''
+        string += '}'
+        return string
+
     def __eq__(self, trade):
         """ check if another trade is the same trade. """
 
@@ -75,7 +87,15 @@ class Price:
         xml += '<currency>' + str(self.currency) +'</currency>'
         xml += '<value>' + str(self.value) + '</value>'
         xml += '</price>'
-        return xml
+        return xml+ ','
+    
+    def jsonise(self):
+        """ convert class into json string """
+        string = '{ '
+        string += '"currency": "' + str(self.currency) + '",'
+        string += '"value": "' + str(self.value) + '"'
+        string += '}'
+        return string
 
     def __eq__(self, price):
         if isinstance(price, self.__class__):
@@ -99,6 +119,19 @@ class Trades:
             xml += trade.xmlise()
         xml += '</cs:trades>'
         return xml
+
+    def jsonise(self, trades):
+        """ convert class into json """
+        if trades == None:
+            trades = self.trades
+
+        string = '{"trades" : [ '
+        for trade in trades:
+            string += trade.jsonise()
+            string += ','
+        string = string.rstrip(',')
+        string += ']}'
+        return string
 
     def save_trades(self, path):
         """ XMLise and save file, checking if valid xml bethod hand"""
@@ -132,7 +165,7 @@ class Trades:
 
     def find_trades(self, stock_id):
         """ returns all stock matching on stock id """
-        return [t for t in self.trades if t.stock_id == stock_id]
+        return [t for t in self.trades if t.stock_id.lower() == stock_id.lower()]
 
 class XMLParser:
     """ XMLParser """
@@ -193,19 +226,50 @@ class TradingBlock(BaseHTTPRequestHandler):
     def find_trades(self, stock_id):
         res = self.trades.find_trades(stock_id)
 
+    def process_GET(self, url):
+        """ parse an incoming url """
+
+        components = url.lower().strip('/').split('/')
+        comp_len = len(components)
+        if comp_len == 0 or comp_len > 2:
+            self.send_response(200)
+            return 'INVALID URL RECIEVED'
+        
+        if components[0] != 'trades':
+            return 'INVALID URL RECIEVED'    
+
+        if comp_len == 1 :
+            json_obj = json.loads(self.trades.jsonise(trades = None))
+            return  json.dumps(json_obj, indent=2)
+        
+        json_obj = json.loads(self.trades.jsonise(self.trades.find_trades(components[1])))
+        return  json.dumps(json_obj, indent=2)
+
+
+    def process_POST():
+        """ processess URL from POST Request """
+
+
     def do_GET(self):
-        self.send_response(200)
-        # Send headers
-        self.send_header('Content-type','text/html')
+        self.send_header('Content-type','application/json')
         self.end_headers()
- 
-        # Send message back to client
-        message = "Hello world!"
-        # Write content as utf-8 data
 
         url = urlparse(self.path)
-        #self.wfile.write(bytes(url, "utf8"))
-        self.wfile.write(bytes(url.geturl(), "utf8"))
+        output = self.process_GET(url.geturl())
+
+        self.wfile.write(bytes(output + '\n', "utf8"))
+        return
+
+    def do_POST(self):
+        self.send_response(200)
+
+        self.send_header('Content-type','text/html')
+        self.end_headers()
+
+        url = urlparse(self.path)
+        print('POST URL:' + url.geturl())
+
+        self.wfile.write(bytes('POST REQUEST RECV' + '\n', "utf8"))
         return
 
 def main():
