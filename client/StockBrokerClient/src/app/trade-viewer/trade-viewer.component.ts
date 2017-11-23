@@ -4,11 +4,11 @@ import { StockQueryService } from '../services/stock-query.service';
 import { Observable, Subscription } from 'rxjs';
 import * as d3 from 'd3';
 @Component({
-  selector: 'app-stock-viewer',
-  templateUrl: './stock-viewer.component.html',
-  styleUrls: ['./stock-viewer.component.scss']
+  selector: 'app-trade-viewer',
+  templateUrl: './trade-viewer.component.html',
+  styleUrls: ['./trade-viewer.component.scss']
 })
-export class StockViewerComponent implements OnInit {
+export class TradeViewerComponent implements OnInit {
 
   constructor(private stockQuery : StockQueryService, private el: ElementRef) { }
 
