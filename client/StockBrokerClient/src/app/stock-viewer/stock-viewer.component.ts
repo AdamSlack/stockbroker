@@ -28,7 +28,7 @@ export class StockViewerComponent implements OnInit {
   public query : string;
   
   @ViewChild('chart') chart: ElementRef;
-  @Input() dataset: Array<{close: number, date: any}>;
+  @Input() dataset: Array<{close: number, date: any}> = [{close: 0, date:'1995-02-05'}];
 
   chartWidth: number = 200;
   chartHeight: number = 200;
@@ -94,7 +94,7 @@ export class StockViewerComponent implements OnInit {
       .y((d) => { return y(d.close); });
 
   x.domain(d3.extent(this.dataset, (d) => { return parseTime(d.date)}));
-  y.domain([0, d3.max(this.dataset, (d) => { return d.close; })]);
+  y.domain([d3.min(this.dataset, (d) => { return d.close; }), d3.max(this.dataset, (d) => { return d.close; })]);
   
   g.append("g")
       .attr("transform", "translate(0," + height + ")")
