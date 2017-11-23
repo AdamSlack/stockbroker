@@ -1,30 +1,39 @@
-<input class="bar " type="text"  [(ngModel)]=query (keyup)=search() placeholder="Search for a stock.">
-<div class="stock-data  stock-title">
-  Stock Viewer
-</div>
-<div class="chart">
-  <svg #chart></svg>
-</div>
 
-<div class="trades-container">
-  <div class="trade-container" *ngFor="let trade of trades">
-    <div class=trade> 
-      <div class="trade-element company-name">
-        {{ trade.companyName }}
-      </div>
-      <div class="trade-element stock-id">
-        {{ trade.stockID }}
-      </div>
-      <div class="trade-element currency">
-        {{ trade.price.currency }}
-      </div>
-      <div class="trade-element value">
-        {{ trade.price.value }}
-      </div>
-      <div class="trade-element stock-owner">
-        {{ trade.owner }}
-      </div>
-    <div>         
+<div class = "page">
+
+  <div>
+    <div class="search">
+      <input class="bar" type="text"  [(ngModel)]=query (keyup)=search() placeholder="Search for a stock.">
+    </div>
+    <table class="trades-container">
+      <tr class=trade *ngFor="let trade of trades">
+        <td class="trade-element stock-id">
+          {{ trade.stockID }}
+        </td>
+        <td class="trade-element company-name">
+          {{ trade.companyName }}
+        </td>
+        <td class="trade-element currency">
+          {{ trade.price.currency }}
+        </td>
+        <td class="trade-element value">
+          {{ trade.price.value }}
+        </td>
+        <td class="trade-element stock-owner">
+          {{ trade.owner }}
+        </td>
+      <tr>
+      <tr class="trade" *ngIf="trades.length == 0 && !searching">
+        <td class="trade-element">
+          No Trades on the block.
+        </td>
+      </tr>         
+    </table>
   </div>
-</div>
 
+  <div class="chart">
+    <svg #chart></svg>
+  </div>
+
+  
+</div>

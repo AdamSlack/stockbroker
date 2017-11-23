@@ -18,6 +18,8 @@ export class StockViewerComponent implements OnInit {
   private tradeSubscription : Subscription;
   private stockSubscription : Subscription;
 
+  public searching : boolean = true;
+
   public dates : string[] = [];
   public open : string[] = [];
   public high : string[] = [];
@@ -58,9 +60,10 @@ export class StockViewerComponent implements OnInit {
     });
 
     this.tradeSubscription.unsubscribe();
+    this.searching = true;
     this.tradeSubscription = this.stockQuery.requestTrades(this.query.length != 0 ? {stockID: this.query} : {}).subscribe((res) => {
       this. trades = res['data'].trades;
-
+      this.searching = false;
     })
   }
 
@@ -132,8 +135,11 @@ export class StockViewerComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.stockSubscription = this.stockQuery.requestStock('', 'TIME_SERIES_DAILY').subscribe();
-    this.tradeSubscription = this.stockQuery.requestTrades(''.length != 0 ? {stockID: ''} : {}).subscribe();
+    this.stockSubscription = this.stockQuery.requestStock('amg', 'TIME_SERIES_DAILY').subscribe();
+    this.tradeSubscription = this.stockQuery.requestTrades({stockID: 'amg'}).subscribe((res) => {
+      this. trades = res['data'].trades;
+
+    });
     this.buildChart();
   }
 }
