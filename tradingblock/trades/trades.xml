@@ -20,4 +20,34 @@
         </price>
         <owner>SlackAdam</owner>
     </trade>
+    <trade>
+        <companyName>Microsoft</companyName>
+        <stockID>MSFT</stockID>
+        <availableShares>100</availableShares>
+        <price>
+            <currency>GBP</currency>
+            <value>75.00</value>
+        </price>
+        <owner>SlackAdam</owner>
+    </trade>
+    <trade>
+        <companyName>Microsoft</companyName>
+        <stockID>MSFT</stockID>
+        <availableShares>100</availableShares>
+        <price>
+            <currency>USD</currency>
+            <value>100.00</value>
+        </price>
+        <owner>AdamSlack</owner>
+    </trade>
+    <trade>
+        <companyName>3M</companyName>
+        <stockID>MMM</stockID>
+        <availableShares>100</availableShares>
+        <price>
+            <currency>GBP</currency>
+            <value>75.00</value>
+        </price>
+        <owner>SlackAdam</owner>
+    </trade>
 </cs:trades>

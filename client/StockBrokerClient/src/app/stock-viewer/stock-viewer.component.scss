@@ -31,3 +31,37 @@ div.stock-data {
 div.stock-title {
     padding: 10px 0px 0px 10px;
 }
+
+.chart {
+    display: inline-flex;
+}
+.trades-container {
+    display: inline-flex;
+
+    .trade-container{
+        font-family: 'Roboto', 'sans-serif';
+        .company-name {
+            width: 33%;
+        }
+        .stock-id{
+            width: 17%;
+        }
+        .currency {
+            width: 7%;
+        }
+        .value {
+            width: 10%;
+        }
+        .stock-data {
+            width: 33%;
+        }
+    }
+}
+
+.trade-element {
+    float: left;
+}
+
+.trade {
+    padding: 10px;
+}

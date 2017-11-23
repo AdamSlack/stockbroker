@@ -31,7 +31,7 @@ class Trade:
         """ convert class into json """
         string = '{' + ''
         string += '"companyName": "' + self.company_name + '",'
-        string += '"stockID": "' + self.company_name + '",'
+        string += '"stockID": "' + self.stock_id + '",'
         string += '"availableShares": "' + str(self.available_shares) + '",'
         string += '"owner": "' + self.owner + '",'
         string += '"price": ' + self.price.jsonise() + ''

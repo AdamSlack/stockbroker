@@ -12,8 +12,8 @@ export class StockViewerComponent implements OnInit {
 
   constructor(private stockQuery : StockQueryService, private el: ElementRef) { }
 
-  public stock : any = 'STOCK BE HERE';
-  public trades : any = 'TRADES BE HERE';
+  public stock : any = [];
+  public trades : any = [];
 
   private tradeSubscription : Subscription;
   private stockSubscription : Subscription;
@@ -40,7 +40,6 @@ export class StockViewerComponent implements OnInit {
     this.dataset = this.close.map((v,idx,) => {
       return {close: parseFloat(v), date: this.dates[idx]}
     });
-    console.log(this.dataset);
   }
   
   public search() : void {
@@ -60,7 +59,8 @@ export class StockViewerComponent implements OnInit {
 
     this.tradeSubscription.unsubscribe();
     this.tradeSubscription = this.stockQuery.requestTrades(this.query.length != 0 ? {stockID: this.query} : {}).subscribe((res) => {
-      this. trades = JSON.stringify(res['data'], null, 2);
+      this. trades = res['data'].trades;
+
     })
   }
 
