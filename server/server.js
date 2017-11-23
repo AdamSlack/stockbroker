@@ -6,10 +6,14 @@ const express = require('express');
 const request = require('request');
 const http = require('http');
 const cors = require('cors');
-const stockBroker = express();
+const bodyParser = require('body-parser');
+const jwt = require('jsonwebtoken');
+const config = require('./config');
+const
 
 
 // CONSTANTS
+const stockBroker = express();
 const APIKEY = "EN5TVUAQ24R3A67K";
 const ALPHAVANTAGE = 'https://www.alphavantage.co'
 const TRADINGBLOCK = 'http://localhost:8081'
