@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import 'rxjs/add/operator/toPromise';
+import {Observable, Subject} from 'rxjs';
 
 @Injectable()
 export class StockQueryService {
@@ -14,15 +15,15 @@ export class StockQueryService {
     let url =  this.ROOT + '/stockbroker/' + granularity + '/' + stockID;
     console.log('url');
 
-    return this.http.get(url).toPromise().then((res) => {return res});
+    return this.http.get(url);
   }
 
-  public requestTrades(options :{stockID?: string}) {
+  public requestTrades(options :{stockID?: string}) : Observable<any> {
     let url = this.ROOT + '/tradingblock/trades';
     if(options.stockID) {
       url += '/' + options.stockID;
     }
-    return this.http.get(url).toPromise().then((res) => {return res});    
+    return this.http.get(url);    
   }
 
 }

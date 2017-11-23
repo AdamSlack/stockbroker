@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
-import {StockQueryService} from '../services/stock-query.service';
+import { StockQueryService } from '../services/stock-query.service';
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-stock-viewer',
@@ -14,6 +15,8 @@ export class StockViewerComponent implements OnInit {
   public stock : any = 'STOCK BE HERE';
   public trades : any = 'TRADES BE HERE';
 
+  private tradeSubscription : Subscription;
+  private stockSubscription : Subscription;
 
   public dates : string[] = [];
   public open : string[] = [];
@@ -24,14 +27,18 @@ export class StockViewerComponent implements OnInit {
 
   public query : string;
   public search() {
-    this.stockQuery.requestStock(this.query, 'TIME_SERIES_DAILY').then((res) => {
+
+    this.stockSubscription.unsubscribe();
+    this.stockSubscription = this.stockQuery.requestStock(this.query, 'TIME_SERIES_DAILY').subscribe((res) => {
       let data = res['data'];
       let data_keys = Object.keys(data);
       let values = data[data_keys[1]];
       let stock_data = this.processStockData(values)
       this.stock = JSON.stringify(res['data'], null, 2);
     });
-    this.stockQuery.requestTrades(this.query.length != 0 ? {stockID: this.query} : {}).then((res) => {
+
+    this.tradeSubscription.unsubscribe();
+    this.tradeSubscription = this.stockQuery.requestTrades(this.query.length != 0 ? {stockID: this.query} : {}).subscribe((res) => {
       this. trades = JSON.stringify(res['data'], null, 2);
     })
   }
@@ -46,7 +53,8 @@ export class StockViewerComponent implements OnInit {
   }
 
   ngOnInit() {
-    
+    this.stockSubscription = this.stockQuery.requestStock('', 'TIME_SERIES_DAILY').subscribe();
+    this.tradeSubscription = this.stockQuery.requestTrades(''.length != 0 ? {stockID: ''} : {}).subscribe();
   }
 
 }
