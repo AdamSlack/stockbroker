@@ -1,5 +1,9 @@
 <input class="bar" type="text"  [(ngModel)]=query (keyup)=search() placeholder="Search for a stock.">
 
+<div>
+  <svg #chart></svg>
+</div>
+
 <div class="stock-data">
   <div> DATES </div> 
   <pre>{{dates}}</pre>          
