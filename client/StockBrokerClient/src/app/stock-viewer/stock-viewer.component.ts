@@ -10,7 +10,7 @@ import * as d3 from 'd3';
 })
 export class StockViewerComponent implements OnInit {
 
-  constructor(private stockQuery : StockQueryService) { }
+  constructor(private stockQuery : StockQueryService, private el: ElementRef) { }
 
   public stock : any = 'STOCK BE HERE';
   public trades : any = 'TRADES BE HERE';
@@ -33,6 +33,7 @@ export class StockViewerComponent implements OnInit {
   chartWidth: number = 200;
   chartHeight: number = 200;
   
+
   public buildStockDataset() : void {
    
     var cumulative = [];
