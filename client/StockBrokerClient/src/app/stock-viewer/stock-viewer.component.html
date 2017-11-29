@@ -1,10 +1,32 @@
 
 <div class = "page">
 
-  <div>
+  <div class="component">
     <div class="search">
       <input class="bar" type="text"  [(ngModel)]=query (keyup)=search() placeholder="Search for a stock.">
     </div>
+    <div class="col-headers">
+      <table class="trades-container">
+      <tr>
+        <td class="stock-id">
+          ID
+        </td>
+        <td class="company-name">
+          Company
+        </td>
+        <td class="price">
+          Price
+        </td>
+        <td class="available-shares">
+          Avail              
+        </td>
+        <td class="stock-owner">
+          Owner
+        </td>
+      </tr>
+      </table>
+    </div>
+    <div class="trades-component">
     <table class="trades-container">
       <tr class=trade *ngFor="let trade of trades">
         <td class="trade-element stock-id">
@@ -19,6 +41,9 @@
         <td class="trade-element value">
           {{ trade.price.value }}
         </td>
+        <td class="trade-element available-shares">
+          {{ trade.availableShares }}
+        </td>
         <td class="trade-element stock-owner">
           {{ trade.owner }}
         </td>
@@ -29,10 +54,12 @@
         </td>
       </tr>         
     </table>
+    </div>
   </div>
-
-  <div class="chart">
-    <svg #chart></svg>
+  <div class="component">
+    <div class="chart">
+      <svg #chart></svg>
+    </div>
   </div>
 
   

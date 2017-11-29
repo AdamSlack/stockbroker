@@ -1,16 +1,13 @@
 'use-strict';
 
-
 // IMPORTS
 const express = require('express');
 const request = require('request');
 const http = require('http');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const jwt = require('jsonwebtoken');
+//const jwt = require('jsonwebtoken');
 const config = require('./config');
-const
-
 
 // CONSTANTS
 const stockBroker = express();

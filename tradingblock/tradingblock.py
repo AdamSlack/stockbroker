@@ -251,6 +251,9 @@ class TradingBlock(BaseHTTPRequestHandler):
 
     def process_POST():
         """ processess URL from POST Request """
+        components = url.lower().strip('/').split('/')
+        comp_len = len(components)
+        
 
 
     def do_GET(self):

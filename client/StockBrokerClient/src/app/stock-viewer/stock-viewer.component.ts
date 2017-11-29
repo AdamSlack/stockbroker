@@ -29,7 +29,10 @@ export class StockViewerComponent implements OnInit {
 
   public query : string;
   
+  private child : ElementRef;
+  
   @ViewChild('chart') chart: ElementRef;
+  
   @Input() dataset: Array<{close: number, date: any}> = [{close: 0, date:'1995-02-05'}];
 
   chartWidth: number = 200;
@@ -72,11 +75,16 @@ export class StockViewerComponent implements OnInit {
       return;
     }
     console.log('Building D3 Chart.')
-    var margin = {top: 20, right: 20, bottom: 50, left: 50},
-        width = 750 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom;
 
     var svg = d3.select(this.chart.nativeElement)
+
+    var chartHeight = 600;
+    var chartWidth = 600;
+
+    var margin = {top: 20, right: 20, bottom: 50, left: 50};
+    var width = chartWidth - margin.left - margin.right;
+    var height = chartHeight - margin.top - margin.bottom;
+
     svg.selectAll('*').remove();
     svg.attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
@@ -136,7 +144,7 @@ export class StockViewerComponent implements OnInit {
 
   ngOnInit() {
     this.stockSubscription = this.stockQuery.requestStock('amg', 'TIME_SERIES_DAILY').subscribe();
-    this.tradeSubscription = this.stockQuery.requestTrades({stockID: 'amg'}).subscribe((res) => {
+    this.tradeSubscription = this.stockQuery.requestTrades({stockID: ''}).subscribe((res) => {
       this. trades = res['data'].trades;
 
     });
