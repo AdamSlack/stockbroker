@@ -1,5 +1,4 @@
 import xmlschema
-from pprint import pprint
 import copy
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse
@@ -102,8 +101,6 @@ class Price:
             return self.value == price.value and self.currency == price.currency
         else:
             return False
-
-
 
 class Trades:
     """ Trades """
