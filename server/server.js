@@ -65,6 +65,7 @@ stockBroker.get('/stockbroker/:granularity/:stockID', (req, res) => {
         'err' : ''
     }
 
+    
     request(url, (error, response, body) => {
         if (error) {
             results.err = error;

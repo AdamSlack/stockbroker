@@ -9,6 +9,7 @@ import { MainPageComponent } from './main-page/main-page.component';
 import {StockQueryService} from './services/stock-query.service';
 import { StockViewerComponent } from './stock-viewer/stock-viewer.component';
 import { TradeViewerComponent } from './trade-viewer/trade-viewer.component';
+import { StockSellerComponent } from './stock-seller/stock-seller.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { TradeViewerComponent } from './trade-viewer/trade-viewer.component';
     BannerComponent,
     MainPageComponent,
     StockViewerComponent,
-    TradeViewerComponent
+    TradeViewerComponent,
+    StockSellerComponent
   ],
   imports: [
     BrowserModule,
