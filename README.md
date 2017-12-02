@@ -24,16 +24,19 @@ The client for the system is implemented as an Angular 4/5 web app. It serves as
 ## How To:
 
 ### Requirements
-In order to utilise this system you will need `Python 3.x` and `Node.js 8.x`
+In order to utilise this system you will need `Python 3.x`, `Node.js 8.x`, and `Angular/cli 5.x`
 
-Trading Block additional Python libraries:
+**Trading Block** additional Python libraries:
+```
+xmlschema
+```
 
-- xmlschema
-
-Stockbroker additional Node.js libraries:
-- express
-- cors
-- body-parser
+**Stockbroker** additional Node.js libraries:
+```
+express
+cors
+body-parser
+```
 
 The Stockbroker client requires the Angular Command Line Interface (Angular CLI). It can be installed though the node package manager npm by entering `npm install -g --save @angular/cli` into the command line.
 
@@ -41,10 +44,10 @@ The Stockbroker client requires the Angular Command Line Interface (Angular CLI)
 
 To run each element of the system, from the directory of each element enter the following into the command line:
 
-Trading Block: `python tradingblock.py`
+**Trading Block:** `python tradingblock.py`
 
-Stockbroker: `node server.js`
+**Stockbroker:** `node server.js`
 
-Client App: `ng serve`
+**Client App:** `ng serve`
 
 
