@@ -16,6 +16,7 @@ export class StockViewerComponent implements OnInit {
   public stock : any = [];
   public trades : any = [];
   public stockCodes : Array<{code : string, company : string, sector : string}> = []
+  public selectedTrade : any;
     
   private tradeSubscription : Subscription;
   private stockSubscription : Subscription;
@@ -42,6 +43,11 @@ export class StockViewerComponent implements OnInit {
   chartWidth: number = 200;
   chartHeight: number = 200;
 
+    public selectTrade (trade : any) {
+        console.log(trade);
+        this.selectedTrade = trade;
+    }
+    
     public fillQuery(query : string) {
         console.log(query);
         this.query = query;
@@ -72,6 +78,7 @@ export class StockViewerComponent implements OnInit {
             return {close: parseFloat(v), date: this.dates[idx]}
         });
     }
+
     
     public search() : void {
 

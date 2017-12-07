@@ -1,73 +1,72 @@
 
 <div class = "page">
-
   <div class="component">
     <div class="search">
       <input class="bar" type="text"  [(ngModel)]=query (keyup)="search();requestStockCodes();" placeholder="Search for a stock." (focus)=searchFocus() (focusout)=searchFocus()>
     </div>
     <div *ngIf="stockCodes.length > 0 && searchFocused" class="autocomplete">
       <table>
-      <tr *ngFor="let code of stockCodes" class="suggestion" (click)=fillQuery(code.code)>
-        <td>
-          {{code.code}}
-        </td>
-        <td>
-          {{code.company}}
-        </td>
-        <td>
-          {{code.sector}}
-        </td>
-      </tr>
+        <tr *ngFor="let code of stockCodes" class="suggestion" (click)=fillQuery(code.code)>
+          <td>
+            {{code.code}}
+          </td>
+          <td>
+            {{code.company}}
+          </td>
+          <td>
+            {{code.sector}}
+          </td>
+        </tr>
       </table>
     </div>
     <div class="trades-component">
-    <table class="trades-container">
+      <table class="trades-container">
         <tr>
-            <td class="stock-id">
-              ID
-            </td>
-            <td class="company-name">
-              Company
-            </td>
-            <td class="price">
-                Currency
-              </td>
-            <td class="price">
-              Price
-            </td>
-            <td class="available-shares">
-              Avail              
-            </td>
-            <td class="stock-owner">
-              Owner
-            </td>
-          </tr>
-      <tr class=trade *ngFor="let trade of trades">
-        <td class="trade-element stock-id">
-          {{ trade.stockID }}
-        </td>
-        <td class="trade-element company-name">
-          {{ trade.companyName }}
-        </td>
-        <td class="trade-element currency">
-          {{ trade.price.currency }}
-        </td>
-        <td class="trade-element value">
-          {{ trade.price.value }}
-        </td>
-        <td class="trade-element available-shares">
-          {{ trade.availableShares }}
-        </td>
-        <td class="trade-element stock-owner">
-          {{ trade.owner }}
-        </td>
-      <tr>
-      <tr class="trade" *ngIf="trades.length == 0 && !searching">
-        <td class="trade-element">
-          No Trades on the block.
-        </td>
-      </tr>         
-    </table>
+          <td class="stock-id">
+            ID
+          </td>
+          <td class="company-name">
+            Company
+          </td>
+          <td class="price">
+            Currency
+          </td>
+          <td class="price">
+            Price
+          </td>
+          <td class="available-shares">
+            Avail              
+          </td>
+          <td class="stock-owner">
+            Owner
+          </td>
+        </tr>
+        <tr class=trade *ngFor="let trade of trades" (click)=selectTrade(trade)>
+          <td class="trade-element stock-id">
+            {{ trade.stockID }}
+          </td>
+          <td class="trade-element company-name">
+            {{ trade.companyName }}
+          </td>
+          <td class="trade-element currency">
+            {{ trade.price.currency }}
+          </td>
+          <td class="trade-element value">
+            {{ trade.price.value }}
+          </td>
+          <td class="trade-element available-shares">
+            {{ trade.availableShares }}
+          </td>
+          <td class="trade-element stock-owner">
+            {{ trade.owner }}
+          </td>
+        <tr>
+        <tr class="trade" *ngIf="trades.length == 0 && !searching">
+          <td class="trade-element">
+            No Trades on the block.
+          </td>
+        </tr>         
+      </table>
     </div>
   </div>
   <div class="component">
@@ -76,7 +75,25 @@
     </div>
   </div>
 
+  
   <div class="clear-component">
     <app-stock-seller></app-stock-seller>
+  </div>
+
+  <div class="clear-component">
+    <div class="stock-inspection">
+      Stock Inspection
+    </div>
+    <div *ngIf="selectedTrade">
+      <div class="stock-inspection">
+        Stock ID: {{selectedTrade.stockID}}
+      </div>
+      <div>
+    </div>
+    <div *ngIf="!selectedTrade">
+      <div class="stock-inspection">
+        Please Select a Trade from the Trades Viewer
+      </div>
+    </div>
   </div>
 </div>
