@@ -6,6 +6,8 @@ const request = require('request');
 const http = require('http');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const sparql = require('sparql');
+
 //const jwt = require('jsonwebtoken');
 const config = require('./config');
 
@@ -24,6 +26,34 @@ stockBroker.use(function(req, res, next) {
   });
 stockBroker.get('/', (req, res) => {
     res.send('Hello World');
+});
+
+stockBroker.get('/companydetails/:stockID', (req, res) => {
+    var stockID = req.param.stockID;
+    console.log(stockID);
+});
+
+stockBroker.post('/tradingblock/trades/:stockID' , (req, res) => {
+    var stockID = req.params.stockID;
+    var url = TRADINGBLOCK + '/trades' + '/stockID';
+    var body = req.body;
+    console.log(body);
+
+    var results = {};
+    request(url, {method: 'POST', body : body, json : true}, (error, response, body) => {
+        if(error) {
+            console.log('ERROR: ' + error);
+            results.err = error;
+        }
+        if (response && response.statusCode) {
+            console.log(response.statusCode);
+            console.log(response.headers['content-type']);
+            results.data = JSON.parse(body);
+            console.log(results);
+        }
+        res.send(JSON.stringify(results, nil, 2));
+        console.log()
+    });
 });
 
 stockBroker.get('/tradingblock/trades/:stockID?', (req, res) => {
@@ -64,7 +94,6 @@ stockBroker.get('/stockbroker/:granularity/:stockID', (req, res) => {
         'data' : '',
         'err' : ''
     }
-
     
     request(url, (error, response, body) => {
         if (error) {

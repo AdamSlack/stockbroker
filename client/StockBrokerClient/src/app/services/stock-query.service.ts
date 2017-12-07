@@ -5,12 +5,12 @@ import {Observable, Subject} from 'rxjs';
 
 @Injectable()
 export class StockQueryService {
-
+  
   constructor(private http: HttpClient) { }
 
   public ROOT : string = 'http://localhost:8080';
 
-  public requestStock(stockID: string, granularity: string) {
+  public requestStock(stockID: string, granularity: string) : Observable<any> {
     // example... 'http://localhost:8080/stockbroker?stockID=AMG&granularity=TIME_SERIES_DAILY'
     let url =  this.ROOT + '/stockbroker/' + granularity + '/' + stockID;
     console.log('url');
@@ -26,4 +26,18 @@ export class StockQueryService {
     return this.http.get(url);    
   }
 
+  public requestStockSale(stockOwner : string, stockID : string, currency : string, price : number, amount : number) : Observable<any> {
+    let url = this.ROOT + '/tradingblock/' + stockID;
+    let body = {
+      owner : stockOwner,
+      stockID : stockID,
+      currency : currency,
+      price : price,
+      amount : amount
+    }
+    return this.http.post(url, body);
+  }
+  
 }
+
+
