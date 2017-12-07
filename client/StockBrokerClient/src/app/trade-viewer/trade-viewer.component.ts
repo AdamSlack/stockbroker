@@ -14,10 +14,12 @@ export class TradeViewerComponent implements OnInit {
 
   public stock : any = 'STOCK BE HERE';
   public trades : any = 'TRADES BE HERE';
-
+  public stockCodes : Array<{code : string, company : string, sector : string}> = []
+    
   private tradeSubscription : Subscription;
   private stockSubscription : Subscription;
-
+  private stockCodeSubscription : Subscription;
+    
   public dates : string[] = [];
   public open : string[] = [];
   public high : string[] = [];
@@ -32,7 +34,16 @@ export class TradeViewerComponent implements OnInit {
 
   chartWidth: number = 200;
   chartHeight: number = 200;
-  
+
+  public requestStockCodes() : void {
+      if (this.stockCodeSubscription) {
+          this.stockCodeSubscription.unsubscribe();
+      }
+      this.stockCodeSubscription = this.stockQuery.requestStockCodes({stockID : this.query}).subscribe((res) => {
+          this.stockCodes = res;
+          console.log(res);
+      });
+  }
 
   public buildStockDataset() : void {
    
@@ -132,7 +143,7 @@ export class TradeViewerComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.stockSubscription = this.stockQuery.requestStock('', 'TIME_SERIES_DAILY').subscribe();
+    this.stockSubscription = this.stockQuery.requestStock('AMGN', 'TIME_SERIES_DAILY').subscribe();
     this.tradeSubscription = this.stockQuery.requestTrades(''.length != 0 ? {stockID: ''} : {}).subscribe();
     this.buildChart();
   }

@@ -3,7 +3,22 @@
 
   <div class="component">
     <div class="search">
-      <input class="bar" type="text"  [(ngModel)]=query (keyup)=search() placeholder="Search for a stock.">
+      <input class="bar" type="text"  [(ngModel)]=query (keyup)="search();requestStockCodes();" placeholder="Search for a stock." (focus)=searchFocus() (focusout)=searchFocus()>
+    </div>
+    <div *ngIf="stockCodes.length > 0 && searchFocused" class="autocomplete">
+      <table>
+      <tr *ngFor="let code of stockCodes">
+        <td>
+          {{code.code}}
+        </td>
+        <td>
+          {{code.company}}
+        </td>
+        <td>
+          {{code.sector}}
+        </td>
+      </tr>
+      </table>
     </div>
     <div class="trades-component">
     <table class="trades-container">

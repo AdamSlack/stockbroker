@@ -16,11 +16,14 @@ export class StockSellerComponent implements OnInit {
   public stockCount : number;
 
   constructor(private tradingBlock : StockQueryService) {
-    this.tradingBlock.requestStockSale(this.owner, this.stockID, this.stockCurrency, this.stockPrice, this.stockCount).subscribe((res) => {
-      
-    });
+
   }
 
+  public sellStock() {
+    this.tradingBlock.requestStockSale(this.owner, this.stockID, this.stockCurrency, this.stockPrice, this.stockCount).subscribe((res) => {
+      console.log(res);
+    });
+  }
 
   ngOnInit() {
   }

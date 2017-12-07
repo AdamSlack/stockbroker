@@ -7,6 +7,8 @@ const http = require('http');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const sparql = require('sparql');
+const util = require('util');
+const fs = require('fs');
 
 //const jwt = require('jsonwebtoken');
 const config = require('./config');
@@ -16,6 +18,16 @@ const stockBroker = express();
 const APIKEY = "EN5TVUAQ24R3A67K";
 const ALPHAVANTAGE = 'https://www.alphavantage.co'
 const TRADINGBLOCK = 'http://localhost:8081'
+
+const STOCKCODES = fs.readFileSync('../data/S&P500.csv','utf-8').split('\n')
+      .map((line) => {
+        let parts = line.split(',');
+        return {
+            'code' : parts[0],
+            'company' : parts[1],
+            'sector' : parts[2]
+        }
+});
 
 
 stockBroker.use(function(req, res, next) {
@@ -38,9 +50,14 @@ stockBroker.post('/tradingblock/trades/:stockID' , (req, res) => {
     var url = TRADINGBLOCK + '/trades' + '/stockID';
     var body = req.body;
     console.log(body);
+    
+    headers = {
+        'Content-Length': Buffer.byteLength(JSON.stringify(body)),
+        'Content-Type' : 'application/json'        
+    }
 
     var results = {};
-    request(url, {method: 'POST', body : body, json : true}, (error, response, body) => {
+    request.post({url, body : JSON.stringify(body), headers : headers}, (error, response, body) => {
         if(error) {
             console.log('ERROR: ' + error);
             results.err = error;
@@ -48,11 +65,10 @@ stockBroker.post('/tradingblock/trades/:stockID' , (req, res) => {
         if (response && response.statusCode) {
             console.log(response.statusCode);
             console.log(response.headers['content-type']);
-            results.data = JSON.parse(body);
-            console.log(results);
+            results.data = body;
+            console.log(util.inspect(results));
         }
-        res.send(JSON.stringify(results, nil, 2));
-        console.log()
+        res.send(JSON.stringify(results, null, 2));
     });
 });
 
@@ -82,7 +98,7 @@ stockBroker.get('/tradingblock/trades/:stockID?', (req, res) => {
     });
 });
 
-stockBroker.get('/stockbroker/:granularity/:stockID', (req, res) => {
+stockBroker.get('/stockbroker/stockdata/:granularity/:stockID', (req, res) => {
     var stockID = req.params.stockID;
     var granularity = req.params.granularity;
     var url = ALPHAVANTAGE + '/query?function=' + granularity + '&symbol='+ stockID +'&apikey='+ APIKEY + '&datatype=json';
@@ -104,8 +120,18 @@ stockBroker.get('/stockbroker/:granularity/:stockID', (req, res) => {
         }
         res.send(JSON.stringify(results, null, 2));        
     });
-    
 
+});
+
+stockBroker.get('/stockbroker/stockcodes/:stockID?', (req, res) => {
+    console.log('Request for possible Stock Codes')
+    var stockID = req.params.stockID;
+    if(!stockID) {
+        stockID = '';
+    }
+    console.log(STOCKCODES[0]);
+    matches = STOCKCODES.filter((deets) => deets.code.toLowerCase().startsWith(stockID.toLowerCase()2));
+    res.send(JSON.stringify(matches, null,2));
 });
 
 stockBroker.listen(8080);

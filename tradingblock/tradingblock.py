@@ -1,7 +1,7 @@
 import xmlschema
 import copy
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs
 import json
 
 class Trade:
@@ -254,8 +254,6 @@ class TradingBlock(BaseHTTPRequestHandler):
 
 
     def do_GET(self):
-        
-
         url = urlparse(self.path)
         output = self.process_GET(url.geturl())
 
@@ -266,15 +264,23 @@ class TradingBlock(BaseHTTPRequestHandler):
         return
 
     def do_POST(self):
+        url = urlparse(self.path)
+        
+        content_len = int(self.headers.get('Content-Length', 0))
+        body_data = self.rfile.read(content_len)
+        print('BODY DATA:', body_data)
+        body = parse_qs(url.query)
+        print('POST BODY:')
+        print(json.dumps(body,indent=2))
+        print('POST URL: ' + url.geturl())
+        
         self.send_response(200)
-
-        self.send_header('Content-type','text/html')
+        self.send_header('Content-type','application/json')
         self.end_headers()
 
         url = urlparse(self.path)
-        print('POST URL:' + url.geturl())
-
-        self.wfile.write(bytes('POST REQUEST RECV' + '\n', "utf8"))
+        res = json.dumps({'data':'Post Req Recv'})
+        self.wfile.write(bytes(res + '\n', "utf8"))
         return
 
 def main():

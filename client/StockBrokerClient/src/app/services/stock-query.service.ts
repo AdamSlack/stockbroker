@@ -12,7 +12,7 @@ export class StockQueryService {
 
   public requestStock(stockID: string, granularity: string) : Observable<any> {
     // example... 'http://localhost:8080/stockbroker?stockID=AMG&granularity=TIME_SERIES_DAILY'
-    let url =  this.ROOT + '/stockbroker/' + granularity + '/' + stockID;
+    let url =  this.ROOT + '/stockbroker/stockdata/' + granularity + '/' + stockID;
     console.log('url');
 
     return this.http.get(url);
@@ -27,7 +27,7 @@ export class StockQueryService {
   }
 
   public requestStockSale(stockOwner : string, stockID : string, currency : string, price : number, amount : number) : Observable<any> {
-    let url = this.ROOT + '/tradingblock/' + stockID;
+    let url = this.ROOT + '/tradingblock/trades/' + stockID;
     let body = {
       owner : stockOwner,
       stockID : stockID,
@@ -37,7 +37,14 @@ export class StockQueryService {
     }
     return this.http.post(url, body);
   }
-  
+
+    public requestStockCodes(options:{stockID? : string }) : Observable<any> {
+        let url = this.ROOT + '/stockbroker/stockcodes/';
+        if (options.stockID) {
+            url += options.stockID;
+        }
+        return this.http.get(url);
+    }
 }
 
 

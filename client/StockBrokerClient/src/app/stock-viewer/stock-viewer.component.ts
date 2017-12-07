@@ -14,12 +14,15 @@ export class StockViewerComponent implements OnInit {
 
   public stock : any = [];
   public trades : any = [];
-
+  public stockCodes : Array<{code : string, company : string, sector : string}> = []
+    
   private tradeSubscription : Subscription;
   private stockSubscription : Subscription;
+  private stockCodeSubscription : Subscription;
 
   public searching : boolean = true;
-
+  public searchFocused : boolean = false;
+    
   public dates : string[] = [];
   public open : string[] = [];
   public high : string[] = [];
@@ -37,7 +40,27 @@ export class StockViewerComponent implements OnInit {
 
   chartWidth: number = 200;
   chartHeight: number = 200;
-  
+
+    public searchFocus() {
+        this.searchFocused = !this.searchFocused;
+    }
+    
+    
+  public requestStockCodes() : void {
+      if (this.stockCodeSubscription) {
+          this.stockCodeSubscription.unsubscribe();
+          this.stockCodes = [];
+      }
+      if(this.query != '') {      
+          this.stockCodeSubscription = this.stockQuery.requestStockCodes({stockID : this.query}).subscribe((res) => {
+              this.stockCodes = res;
+              console.log(res);
+          });
+
+      }
+  }
+    
+
 
   public buildStockDataset() : void {
    
