@@ -130,7 +130,7 @@ stockBroker.get('/stockbroker/stockcodes/:stockID?', (req, res) => {
         stockID = '';
     }
     console.log(STOCKCODES[0]);
-    matches = STOCKCODES.filter((deets) => deets.code.toLowerCase().startsWith(stockID.toLowerCase()2));
+    matches = STOCKCODES.filter((deets) => deets.code.toLowerCase().startsWith(stockID.toLowerCase()));
     res.send(JSON.stringify(matches, null,2));
 });
 

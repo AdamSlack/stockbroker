@@ -7,7 +7,7 @@
     </div>
     <div *ngIf="stockCodes.length > 0 && searchFocused" class="autocomplete">
       <table>
-      <tr *ngFor="let code of stockCodes">
+      <tr *ngFor="let code of stockCodes" class="suggestion" (click)=fillQuery(code.code)>
         <td>
           {{code.code}}
         </td>

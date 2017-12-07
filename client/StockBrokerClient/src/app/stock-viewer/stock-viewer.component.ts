@@ -1,3 +1,4 @@
+
 import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
 
 import { StockQueryService } from '../services/stock-query.service';
@@ -30,7 +31,7 @@ export class StockViewerComponent implements OnInit {
   public close : string[] = [];
   public volume : string[] = []; 
 
-  public query : string;
+  public query : string = '';
   
   private child : ElementRef;
   
@@ -41,136 +42,143 @@ export class StockViewerComponent implements OnInit {
   chartWidth: number = 200;
   chartHeight: number = 200;
 
+    public fillQuery(query : str) {
+        console.log(query);
+        this.query = query;
+        this.search();
+    }
+    
     public searchFocus() {
         this.searchFocused = !this.searchFocused;
+    }    
+    
+    public requestStockCodes() : void {
+        if (this.stockCodeSubscription) {
+            this.stockCodeSubscription.unsubscribe();
+            this.stockCodes = [];
+        }
+        if(this.query != '') {      
+            this.stockCodeSubscription = this.stockQuery.requestStockCodes({stockID : this.query}).subscribe((res) => {
+                this.stockCodes = res.sort((a,b) => a.code - b.code);
+            });
+
+        }
+    }
+
+    public buildStockDataset() : void {
+        
+        var cumulative = [];
+        this.dataset = this.close.map((v,idx,) => {
+            return {close: parseFloat(v), date: this.dates[idx]}
+        });
     }
     
-    
-  public requestStockCodes() : void {
-      if (this.stockCodeSubscription) {
-          this.stockCodeSubscription.unsubscribe();
-          this.stockCodes = [];
-      }
-      if(this.query != '') {      
-          this.stockCodeSubscription = this.stockQuery.requestStockCodes({stockID : this.query}).subscribe((res) => {
-              this.stockCodes = res;
-              console.log(res);
-          });
+    public search() : void {
 
-      }
-  }
-    
+        if(this.stockSubscription) {
+            this.stockSubscription.unsubscribe();
+        }
+        if(this.query.length > 0) {
+            this.stockSubscription = this.stockQuery.requestStock(this.query, 'TIME_SERIES_DAILY').subscribe((res) => {
+                let data = res['data'];
+                let data_keys = Object.keys(data);
+                let values = data[data_keys[1]];
+                let stock_data = this.processStockData(values)
+                this.stock = JSON.stringify(res['data'], null, 2);
 
-
-  public buildStockDataset() : void {
-   
-    var cumulative = [];
-    this.dataset = this.close.map((v,idx,) => {
-      return {close: parseFloat(v), date: this.dates[idx]}
-    });
-  }
-  
-  public search() : void {
-
-    this.stockSubscription.unsubscribe();
-    this.stockSubscription = this.stockQuery.requestStock(this.query, 'TIME_SERIES_DAILY').subscribe((res) => {
-      let data = res['data'];
-      let data_keys = Object.keys(data);
-      let values = data[data_keys[1]];
-      let stock_data = this.processStockData(values)
-      this.stock = JSON.stringify(res['data'], null, 2);
-
-      this.buildStockDataset();
-      this.buildChart();
-      
-    });
-
-    this.tradeSubscription.unsubscribe();
-    this.searching = true;
-    this.tradeSubscription = this.stockQuery.requestTrades(this.query.length != 0 ? {stockID: this.query} : {}).subscribe((res) => {
-      this. trades = res['data'].trades;
-      this.searching = false;
-    })
-  }
-
-  public buildChart(){
-    if (!this.dataset) {
-      return;
+                this.buildStockDataset();
+                this.buildChart();
+            });
+        }
+        
+        if(this.tradeSubscription) {
+            this.tradeSubscription.unsubscribe();
+        }
+        this.searching = true;
+        this.tradeSubscription = this.stockQuery.requestTrades(this.query.length != 0 ? {stockID: this.query} : {}).subscribe((res) => {
+            this. trades = res['data'].trades;
+            this.searching = false;
+        })
     }
-    console.log('Building D3 Chart.')
 
-    var svg = d3.select(this.chart.nativeElement)
+    public buildChart(){
+        if (!this.dataset) {
+            return;
+        }
+        console.log('Building D3 Chart.')
 
-    var chartHeight = 600;
-    var chartWidth = 600;
+        var svg = d3.select(this.chart.nativeElement)
 
-    var margin = {top: 20, right: 20, bottom: 50, left: 50};
-    var width = chartWidth - margin.left - margin.right;
-    var height = chartHeight - margin.top - margin.bottom;
+        var chartHeight = 600;
+        var chartWidth = 600;
 
-    svg.selectAll('*').remove();
-    svg.attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-        .attr("transform",
-              "translate(" + margin.left + "," + margin.top + ")");
-             
-    var g = svg.append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+        var margin = {top: 20, right: 20, bottom: 50, left: 50};
+        var width = chartWidth - margin.left - margin.right;
+        var height = chartHeight - margin.top - margin.bottom;
 
-  var x = d3.scaleTime()
-      .rangeRound([0, width]);
+        svg.selectAll('*').remove();
+        svg.attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                  "translate(" + margin.left + "," + margin.top + ")");
+        
+        var g = svg.append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-  var y = d3.scaleLinear()
-      .rangeRound([height, 0]);
-  var parseTime = d3.timeParse('%Y-%m-%d');
-      
-  var line = d3.line()
-      .x((d) => { return x(parseTime(d.date)); })
-      .y((d) => { return y(d.close); });
+        var x = d3.scaleTime()
+            .rangeRound([0, width]);
 
-  x.domain(d3.extent(this.dataset, (d) => { return parseTime(d.date)}));
-  y.domain([d3.min(this.dataset, (d) => { return d.close; }), d3.max(this.dataset, (d) => { return d.close; })]);
-  
-  g.append("g")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x))
-    .select(".domain")
+        var y = d3.scaleLinear()
+            .rangeRound([height, 0]);
+        var parseTime = d3.timeParse('%Y-%m-%d');
+        
+        var line = d3.line()
+            .x((d) => { return x(parseTime(d.date)); })
+            .y((d) => { return y(d.close); });
 
-  g.append("g")
-      .call(d3.axisLeft(y))
-    .append("text")
-      .attr("fill", "#000")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", "0.71em")
-      .attr("text-anchor", "end")
-      .text("Price ($)");
+        x.domain(d3.extent(this.dataset, (d) => { return parseTime(d.date)}));
+        y.domain([d3.min(this.dataset, (d) => { return d.close; }), d3.max(this.dataset, (d) => { return d.close; })]);
+        
+        g.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x))
+            .select(".domain")
 
-    g.append("path")
-        .datum(this.dataset)
-        .attr("fill", "none")
-        .attr("stroke", "steelblue")
-        .attr("stroke-linejoin", "round")
-        .attr("stroke-linecap", "round")
-        .attr("stroke-width", 1.5)
-        .attr("d", line);
-  }
+        g.append("g")
+            .call(d3.axisLeft(y))
+            .append("text")
+            .attr("fill", "#000")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", "0.71em")
+            .attr("text-anchor", "end")
+            .text("Price ($)");
 
-  public processStockData(values : any) {
-    this.dates = Object.keys(values);
-    this.open = this.dates.map((date) => values[date]['1. open']);
-    this.high = this.dates.map((date) => values[date]['2. high']);
-    this.low = this.dates.map((date) => values[date]['3. low']);
-    this.close = this.dates.map((date) => values[date]['4. close']);
-    this.volume = this.dates.map((date) => values[date]['5. volume']);
-  }
+        g.append("path")
+            .datum(this.dataset)
+            .attr("fill", "none")
+            .attr("stroke", "steelblue")
+            .attr("stroke-linejoin", "round")
+            .attr("stroke-linecap", "round")
+            .attr("stroke-width", 1.5)
+            .attr("d", line);
+    }
 
-  ngOnInit() {
-    this.stockSubscription = this.stockQuery.requestStock('amg', 'TIME_SERIES_DAILY').subscribe();
-    this.tradeSubscription = this.stockQuery.requestTrades({stockID: ''}).subscribe((res) => {
-      this. trades = res['data'].trades;
+    public processStockData(values : any) {
+        this.dates = Object.keys(values);
+        this.open = this.dates.map((date) => values[date]['1. open']);
+        this.high = this.dates.map((date) => values[date]['2. high']);
+        this.low = this.dates.map((date) => values[date]['3. low']);
+        this.close = this.dates.map((date) => values[date]['4. close']);
+        this.volume = this.dates.map((date) => values[date]['5. volume']);
+    }
 
-    });
-    this.buildChart();
-  }
+    ngOnInit() {
+        this.stockSubscription = this.stockQuery.requestStock('amg', 'TIME_SERIES_DAILY').subscribe();
+        this.tradeSubscription = this.stockQuery.requestTrades({stockID: ''}).subscribe((res) => {
+            this. trades = res['data'].trades;
+
+        });
+        this.buildChart();
+    }
 }
