@@ -42,7 +42,7 @@ export class StockViewerComponent implements OnInit {
   chartWidth: number = 200;
   chartHeight: number = 200;
 
-    public fillQuery(query : str) {
+    public fillQuery(query : string) {
         console.log(query);
         this.query = query;
         this.search();
