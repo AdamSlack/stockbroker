@@ -51,8 +51,42 @@ stockBroker.get('/companydetails/:stockID', (req, res) => {
     console.log(stockID);
 });
 
+stockBroker.post('/tradingblock/trades', (req, res) => {
+    console.log('Trade Request for buying stock up for trade');
+    var url = TRADINGBLOCK + '/trades/buy_order'
+    var body = req.body;
+    let resBody = {
+        companyName: body.companyName,
+        stockID: body.stockID,
+        currency: body.currency,
+        value: body.price,
+        amountAvailable: body.amountAvailable,
+        owner: body.owner
+    }
+
+    var results = {};
+    let headers = {
+        'Content-Length': Buffer.byteLength(JSON.stringify(resBody)),
+        'Content-Type': 'application/json'
+    }
+    console.log(resBody);
+    request.post({ url, body: JSON.stringify(resBody), headers: headers }, (error, response, body) => {
+        if (error) {
+            console.log('ERROR: ' + error);
+            results.err = error;
+        }
+        if (response && response.statusCode) {
+            console.log(response.statusCode);
+            console.log(response.headers['content-type']);
+            results.data = body;
+            console.log(util.inspect(results));
+        }
+        res.send(JSON.stringify(results, null, 2));
+    });
+});
+
 stockBroker.post('/tradingblock/trades/:stockID', (req, res) => {
-    console.log('Trade request Post recieved.')
+    console.log('Trade Request for issuing a new trade request.')
     var stockID = req.params.stockID;
     var url = TRADINGBLOCK + '/trades/';
     var body = req.body;

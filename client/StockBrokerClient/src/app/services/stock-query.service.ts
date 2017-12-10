@@ -10,10 +10,28 @@ export class StockQueryService {
 
   public ROOT : string = 'http://localhost:8080';
 
+  public requestStockPurchase(stockOwner : string, stockID : string, company:string, currency : string, price : number, amount : number){
+    let url = this.ROOT + '/tradingblock/trades';
+    console.log(url);
+    let body = {
+      owner : stockOwner,
+      stockID : stockID,
+      companyName : company,
+      currency : currency,
+      price : price,
+      amountAvailable : amount
+    }
+    let headers = new HttpHeaders()
+    headers.append('Content-Type' , 'application/json');
+
+    console.log(JSON.stringify(body,null,2));
+    return this.http.post(url, body, {headers: headers});
+  }
+
   public requestStock(stockID: string, granularity: string) : Observable<any> {
     // example... 'http://localhost:8080/stockbroker?stockID=AMG&granularity=TIME_SERIES_DAILY'
     let url =  this.ROOT + '/stockbroker/stockdata/' + granularity + '/' + stockID;
-    console.log('url');
+    console.log(url);
 
     return this.http.get(url);
   }

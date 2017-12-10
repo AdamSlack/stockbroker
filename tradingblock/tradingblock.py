@@ -41,7 +41,7 @@ class Trade:
         """ check if another trade is the same trade. """
 
         if isinstance(trade, self.__class__):
-            stock = self.stock_id == self.stock_id 
+            stock = self.stock_id == self.stock_id
             shares = self.available_shares == trade.available_shares
             name = self.company_name == trade.company_name
             owner = self.owner == trade.owner
@@ -57,6 +57,10 @@ class Trade:
             name = self.company_name == trade.company_name
             owner = self.owner == trade.owner
             price = self.price == trade.price
+            print('stock', stock)
+            print('name', name)
+            print('owner', owner)
+            print('price', price)
             return  stock and name and owner and price
         else:
             return False
@@ -98,7 +102,11 @@ class Price:
 
     def __eq__(self, price):
         if isinstance(price, self.__class__):
-            return self.value == price.value and self.currency == price.currency
+            value = self.value == price.value
+            currecny = self.currency == price.currency
+            print('value', value)
+            print('currency', currecny)
+            return value and currecny
         else:
             return False
 
@@ -146,18 +154,22 @@ class Trades:
 
     def remove_trade(self, trade):
         """ remove trade from the block """
+        print('Removing A Trade:', trade.jsonise())
         for idx, t in enumerate(self.trades):
             if t == trade:
+                print('Trade Match! Removing it.')
                 del self.trades[idx]
                 return True
-
-            if t.same_owner_stock_price(trade) and t.available_shares <= trade.available_shares:
+            print(trade.owner, trade.stock_id, trade.available_shares, trade.price.currency, trade.price.value, t.same_owner_stock_price(trade))
+            print(t.owner, t.stock_id, t.available_shares, t.price.currency, t.price.value)
+            if t.same_owner_stock_price(trade) and trade.available_shares <= t.available_shares:
                 self.trades[idx].available_shares -= trade.available_shares
                 print(self.trades[idx].available_shares)
                 if t.available_shares == 0:
                     del self.trades[idx]
+                    print('Trade Deleted')
                 return True
-
+        print('Couldnt find the trade...')
         return False
 
     def find_trades(self, stock_id):
@@ -258,15 +270,29 @@ class TradingBlock(BaseHTTPRequestHandler):
         if comp_len == 1:
             self.send_response(200)
             print('BODY:', body)
-            new_trade = Trade(company_name=body['companyName'],
-             stock_id=body['stockID'],
-             available_shares=body['amountAvailable'],
-             price=Price(value=body['value'], currency=body['currency']),
-             owner=body['owner'])
+            new_trade = Trade(
+                company_name=body['companyName'],
+                stock_id=body['stockID'],
+                available_shares=int(body['amountAvailable']),
+                price=Price(value=float(body['value']), currency=body['currency']),
+                owner=body['owner']
+            )
             self.add_trade(new_trade)
             print(new_trade.jsonise())
             return new_trade.jsonise();
 
+        if comp_len == 2 and components[1] == 'buy_order':
+            self.send_response(200)
+            print('BODY:', body)
+            trade_purchased = Trade(
+                company_name=body['companyName'],
+                stock_id=body['stockID'],
+                available_shares=int(body['amountAvailable']),
+                price=Price(value=float(body['value']), currency=body['currency']),
+                owner=body['owner']
+            )
+            self.remove_trade(trade_purchased)
+            return json.dumps({'success': 'Trade Successfully removed from the block.'});
         self.send_response(404)
         return json.dumps({'ERR' : 'Not found.'})
 

@@ -21,6 +21,7 @@ export class StockViewerComponent implements OnInit {
   private tradeSubscription : Subscription;
   private stockSubscription : Subscription;
   private stockCodeSubscription : Subscription;
+  private stockPurchaseSubscription: Subscription;
 
   public searching : boolean = true;
   public searchFocused : boolean = false;
@@ -76,6 +77,23 @@ export class StockViewerComponent implements OnInit {
         var cumulative = [];
         this.dataset = this.close.map((v,idx,) => {
             return {close: parseFloat(v), date: this.dates[idx]}
+        });
+    }
+
+    public buyTrade() : void {
+        let stockID = this.selectedTrade.stockID;
+        let company = this.selectedTrade.companyName;
+        let owner = this.selectedTrade.owner;
+        let amount = this.selectedTrade.availableShares;
+        let value = this.selectedTrade.price.value;
+        let currency = this.selectedTrade.price.currency;
+        if(this.stockPurchaseSubscription) {
+            this.stockPurchaseSubscription.unsubscribe();
+        }
+
+        this.stockPurchaseSubscription = this.stockQuery.requestStockPurchase(owner, stockID, company, currency, value, amount).subscribe((res) => {
+            console.log(res);
+            this.search();
         });
     }
 
