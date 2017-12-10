@@ -65,6 +65,21 @@ stockBroker.post('/tradingblock/trades/:stockID', (req, res) => {
 
     console.log(headers)
     var results = {};
+
+    let match = STOCKCODES.filter((code => code.code == body.stockID));
+    console.log(match);
+
+    if (match.length != 1) {
+        results.err = 'Stock Code Not Found.'
+        res.send(JSON.stringify(results, null, 2));
+        return;
+    }
+    if (/^[a-zA-Z]+$/.test(body.currency)) {
+        results.err = 'Currency Invalid';
+        res.send(JSON.stringify(results, null, 2));
+        return;
+    }
+
     request.post({ url, body: JSON.stringify(body), headers: headers }, (error, response, body) => {
         if (error) {
             console.log('ERROR: ' + error);

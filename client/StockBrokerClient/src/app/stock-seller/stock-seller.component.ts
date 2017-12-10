@@ -21,7 +21,12 @@ export class StockSellerComponent implements OnInit {
 
   public sellStock() {
     this.tradingBlock.requestStockSale(this.owner, this.stockID, this.stockCurrency, this.stockPrice, this.stockCount).subscribe((res) => {
-      console.log(res);
+      if(!res.err) {
+        alert('Stock sold' + res);
+      }
+      else {
+        alert(res.err);
+      }
     });
   }
 
