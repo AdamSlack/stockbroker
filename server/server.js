@@ -62,7 +62,7 @@ stockBroker.post('/tradingblock/trades/:stockID', (req, res) => {
         currency: body.currency,
         value: body.price,
         amountAvailable: body.amount,
-        owner: 'DEFAULT'
+        owner: 'Stock Broker'
     }
     var results = {};
 
