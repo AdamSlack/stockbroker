@@ -33,6 +33,36 @@
     }
 }
 
+input.submit {
+    margin-top: 5px;
+    margin-bottom: 10px;
+    padding: 10px;
+    width: 100%;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    box-sizing: border-box;
+    border: 2px solid #222255;
+    background: #fff;
+    color: #eee;
+    background: #222255;
+    transition: 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+    font-size: 1em;
+    text-align: center;
+    &:hover {
+        outline: none;
+        border: 2px solid #333355;
+        background: #333355;
+        transition: 0.2s;
+    }
+    &:active {
+        outline: none;
+        border: 2px solid #222277;
+        background: #222277;
+        transition: 0.2s;
+    }
+}
+
 input {
     margin-top: 5px;
     margin-left: 10px;
