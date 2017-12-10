@@ -86,7 +86,7 @@ class Price:
         xml += '<currency>' + str(self.currency) +'</currency>'
         xml += '<value>' + str(self.value) + '</value>'
         xml += '</price>'
-        return xml+ ','
+        return xml+ ''
     
     def jsonise(self):
         """ convert class into json string """
@@ -257,14 +257,18 @@ class TradingBlock(BaseHTTPRequestHandler):
         
         if comp_len == 1:
             self.send_response(200)
-            new_trade = Trade(company_name='test_company', stock_id='ID', available_shares=123,price=Price(value=10,currency='USD'),owner='FOOBAR')
+            new_trade = Trade(company_name='test_company',
+             stock_id='ID',
+             available_shares=123,
+             price=Price(value=10, currency='USD'),
+             owner='FOOBAR')
             self.add_trade(new_trade)
             print(new_trade.jsonise())
             return new_trade.jsonise();
 
         self.send_response(404)
         return json.dumps({'ERR' : 'Not found.'})
-    
+
     def do_GET(self):
         url = urlparse(self.path)
         output = self.process_GET(url.geturl())
