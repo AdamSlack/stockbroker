@@ -246,22 +246,23 @@ class TradingBlock(BaseHTTPRequestHandler):
         return  json.dumps(json_obj, indent=2)
 
 
-    def process_POST(self, url, body):
+    def process_POST(self, url, bodystr):
         """ processess URL from POST Request """
         components = url.lower().strip('/').split('/')
         comp_len = len(components)
-
+        body = json.loads(bodystr)
         if components[0] != 'trades' :
             self.send_response(404)
             return json.dumps({'ERR' : 'Not found.'})
         
         if comp_len == 1:
             self.send_response(200)
-            new_trade = Trade(company_name='test_company',
-             stock_id='ID',
-             available_shares=123,
-             price=Price(value=10, currency='USD'),
-             owner='FOOBAR')
+            print('BODY:', body)
+            new_trade = Trade(company_name=body['companyName'],
+             stock_id=body['stockID'],
+             available_shares=body['amountAvailable'],
+             price=Price(value=body['value'], currency=body['currency']),
+             owner=body['owner'])
             self.add_trade(new_trade)
             print(new_trade.jsonise())
             return new_trade.jsonise();

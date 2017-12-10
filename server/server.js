@@ -29,7 +29,7 @@ const STOCKCODES = fs.readFileSync('../data/S&P500.csv', 'utf-8').split('\n')
             'company': parts[1],
             'sector': parts[2]
         }
-    });
+    }).slice(1);
 
 
 stockBroker.use(function(req, res, next) {
@@ -56,14 +56,14 @@ stockBroker.post('/tradingblock/trades/:stockID', (req, res) => {
     var stockID = req.params.stockID;
     var url = TRADINGBLOCK + '/trades/';
     var body = req.body;
-    console.log(body);
-
-    headers = {
-        'Content-Length': Buffer.byteLength(JSON.stringify(body)),
-        'Content-Type': 'application/json'
+    let resBody = {
+        companyName: '',
+        stockID: body.stockID,
+        currency: body.currency,
+        value: body.price,
+        amountAvailable: body.amount,
+        owner: 'DEFAULT'
     }
-
-    console.log(headers)
     var results = {};
 
     let match = STOCKCODES.filter((code => code.code == body.stockID));
@@ -74,13 +74,20 @@ stockBroker.post('/tradingblock/trades/:stockID', (req, res) => {
         res.send(JSON.stringify(results, null, 2));
         return;
     }
-    if (/^[a-zA-Z]+$/.test(body.currency)) {
+    if (!/^[a-zA-Z]+$/.test(body.currency)) {
         results.err = 'Currency Invalid';
         res.send(JSON.stringify(results, null, 2));
         return;
     }
+    resBody.companyName = match[0].company;
+    console.log(resBody);
 
-    request.post({ url, body: JSON.stringify(body), headers: headers }, (error, response, body) => {
+    let headers = {
+        'Content-Length': Buffer.byteLength(JSON.stringify(resBody)),
+        'Content-Type': 'application/json'
+    }
+
+    request.post({ url, body: JSON.stringify(resBody), headers: headers }, (error, response, body) => {
         if (error) {
             console.log('ERROR: ' + error);
             results.err = error;
