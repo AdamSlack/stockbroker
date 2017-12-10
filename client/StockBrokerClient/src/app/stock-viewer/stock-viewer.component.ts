@@ -94,6 +94,8 @@ export class StockViewerComponent implements OnInit {
         this.stockPurchaseSubscription = this.stockQuery.requestStockPurchase(owner, stockID, company, currency, value, amount).subscribe((res) => {
             console.log(res);
             this.search();
+            this.selectedTrade = undefined;
+            alert('Stock Bought!')
         });
     }
 
