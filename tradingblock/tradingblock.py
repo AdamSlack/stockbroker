@@ -246,13 +246,25 @@ class TradingBlock(BaseHTTPRequestHandler):
         return  json.dumps(json_obj, indent=2)
 
 
-    def process_POST():
+    def process_POST(self, url, body):
         """ processess URL from POST Request """
         components = url.lower().strip('/').split('/')
         comp_len = len(components)
+
+        if components[0] != 'trades' :
+            self.send_response(404)
+            return json.dumps({'ERR' : 'Not found.'})
         
+        if comp_len == 1:
+            self.send_response(200)
+            new_trade = Trade(company_name='test_company', stock_id='ID', available_shares=123,price=Price(value=10,currency='USD'),owner='FOOBAR')
+            self.add_trade(new_trade)
+            print(new_trade.jsonise())
+            return new_trade.jsonise();
 
-
+        self.send_response(404)
+        return json.dumps({'ERR' : 'Not found.'})
+    
     def do_GET(self):
         url = urlparse(self.path)
         output = self.process_GET(url.geturl())
@@ -265,22 +277,18 @@ class TradingBlock(BaseHTTPRequestHandler):
 
     def do_POST(self):
         url = urlparse(self.path)
-        
+        url_string = url.geturl()
+
         content_len = int(self.headers.get('Content-Length', 0))
-        body_data = self.rfile.read(content_len)
-        print('BODY DATA:', body_data)
-        body = parse_qs(url.query)
-        print('POST BODY:')
-        print(json.dumps(body,indent=2))
-        print('POST URL: ' + url.geturl())
-        
-        self.send_response(200)
+        body_data = self.rfile.read(content_len).decode()
+        print(body_data)
+        output = self.process_POST(url_string, body_data)
+
+        # self.send_response(200)
         self.send_header('Content-type','application/json')
         self.end_headers()
 
-        url = urlparse(self.path)
-        res = json.dumps({'data':'Post Req Recv'})
-        self.wfile.write(bytes(res + '\n', "utf8"))
+        self.wfile.write(bytes(output + '\n', "utf8"))
         return
 
 def main():

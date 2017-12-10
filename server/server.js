@@ -12,6 +12,8 @@ const fs = require('fs');
 
 //const jwt = require('jsonwebtoken');
 const config = require('./config');
+const jsonParser = bodyParser.json()
+
 
 // CONSTANTS
 const stockBroker = express();
@@ -36,6 +38,10 @@ stockBroker.use(function(req, res, next) {
     res.header('Accept', 'application/json');
     next();
 });
+stockBroker.use(bodyParser.urlencoded({
+    extended: true
+}));
+stockBroker.use(jsonParser);
 stockBroker.get('/', (req, res) => {
     res.send('Hello World');
 });
@@ -48,7 +54,7 @@ stockBroker.get('/companydetails/:stockID', (req, res) => {
 stockBroker.post('/tradingblock/trades/:stockID', (req, res) => {
     console.log('Trade request Post recieved.')
     var stockID = req.params.stockID;
-    var url = TRADINGBLOCK + '/trades' + '/stockID';
+    var url = TRADINGBLOCK + '/trades/';
     var body = req.body;
     console.log(body);
 
@@ -57,6 +63,7 @@ stockBroker.post('/tradingblock/trades/:stockID', (req, res) => {
         'Content-Type': 'application/json'
     }
 
+    console.log(headers)
     var results = {};
     request.post({ url, body: JSON.stringify(body), headers: headers }, (error, response, body) => {
         if (error) {

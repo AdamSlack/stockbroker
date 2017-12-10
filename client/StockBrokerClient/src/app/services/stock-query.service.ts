@@ -35,7 +35,11 @@ export class StockQueryService {
       price : price,
       amount : amount
     }
-    return this.http.post(url, body);
+    let headers = new HttpHeaders()
+    headers.append('Content-Type' , 'application/json');
+
+    console.log(JSON.stringify(body,null,2));
+    return this.http.post(url, body, {headers: headers});
   }
 
     public requestStockCodes(options:{stockID? : string }) : Observable<any> {
