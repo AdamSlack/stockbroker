@@ -136,7 +136,7 @@
                     {{selectedTrade.owner}}
                 </div>
             </div>
-            <input class="submit" value="Buy Stock" (click)=sellStock()>
+            <input class="submit" value="Buy Stock" (click)=sellStock() readonly="readonly">
         </div>
         <div *ngIf="!selectedTrade">
             <div class="trade-inspection ">
