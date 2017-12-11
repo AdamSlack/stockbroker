@@ -1,6 +1,5 @@
 package DOCwebServices;
 
-import DOCwebServices.CurrencyConversionWS.ExRate;
 import javax.jws.WebService;
 import javax.jws.WebMethod;
 

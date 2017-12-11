@@ -1,5 +1,4 @@
-package DOCwebServices;
-
+import DOCwebServices.CurrencyConverterImpl;
 import javax.xml.ws.Endpoint;
 
 public class CurrencyConverterPublisher {
@@ -10,7 +9,7 @@ public class CurrencyConverterPublisher {
 		String addr = new String("http://localhost");
 		
 		System.out.println("Running Server on: " + addr + " on port: " + port );
-		Endpoint.publish(addr + ":" + port + "/currencyconverter", new CurrencyConverterImpl());
+		Endpoint.publish(addr + ":" + port + "/CurrencyConverter", new CurrencyConverterImpl());
 	}
 	
 }

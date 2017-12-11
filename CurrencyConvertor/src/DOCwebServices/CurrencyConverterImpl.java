@@ -19,6 +19,8 @@ public class CurrencyConverterImpl implements CurrencyConverter{
         System.out.println("Base Currency: " + from);
         System.out.println("Goal Currency: " + to);
         System.out.println("Amount: " + amount.toString());
+        CurrencyConversionWS conveter = new CurrencyConversionWS();
+        
         return 0.00f;
     }
     
