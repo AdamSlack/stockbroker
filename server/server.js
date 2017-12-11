@@ -32,23 +32,23 @@ const jsonParser = bodyParser.json()
 //     '}'
 //);
 
-var qString = 'http://dbpedia.org/sparql?query=' + encodeURIComponent([
-    'PREFIX dbpedia-owl: <http://dbpedia.org/ontology/>',
-    'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>',
-    'SELECT DISTINCT ?iri ?description ?name {',
-    '?iri a dbpedia-owl:Company ;',
-    'dbpedia-owl:abstract ?description ;',
-    'rdfs:label ?lbl ;' +
-    'foaf:name ?name .' +
-    '?name bif:contains "\'Amgen Inc\'"@en',
-    //'?lbl bif:contains "'Amgen'"@en  .'
-    'FILTER( langMatches(lang(?description),"en") )',
-    '}'
-].join(' ')) + '&format=json';
+// var qString = 'http://dbpedia.org/sparql?query=' + encodeURIComponent([
+//     'PREFIX dbpedia-owl: <http://dbpedia.org/ontology/>',
+//     'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>',
+//     'SELECT DISTINCT ?iri ?description ?name {',
+//     '?iri a dbpedia-owl:Company ;',
+//     'dbpedia-owl:abstract ?description ;',
+//     'rdfs:label ?lbl ;' +
+//     'foaf:name ?name .' +
+//     '?name bif:contains "\'Amgen Inc\'"@en',
+//     //'?lbl bif:contains "'Amgen'"@en  .'
+//     'FILTER( langMatches(lang(?description),"en") )',
+//     '}'
+// ].join(' ')) + '&format=json';
 
-request.get(qString, (error, response, body) => {
-    console.log(JSON.stringify(JSON.parse(body).results.bindings, null, 2));
-});
+// request.get(qString, (error, response, body) => {
+//     console.log(JSON.stringify(JSON.parse(body).results.bindings, null, 2));
+// });
 
 // PREFIX dbpedia-owl: <http://dbpedia.org/ontology/>
 // PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>        
@@ -233,6 +233,31 @@ stockBroker.get('/stockbroker/stockdata/:granularity/:stockID', (req, res) => {
         res.send(JSON.stringify(results, null, 2));
     });
 
+});
+
+stockBroker.get('/semantic/:companyName', (req, res) => {
+    var companyName = req.params.companyName;
+    console.log(companyName);
+
+    var qString = 'http://dbpedia.org/sparql?query=' + encodeURIComponent([
+        'PREFIX dbpedia-owl: <http://dbpedia.org/ontology/>',
+        'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>',
+        'SELECT DISTINCT ?iri ?description ?name {',
+        '?iri a dbpedia-owl:Company ;',
+        'dbpedia-owl:abstract ?description ;',
+        'rdfs:label ?lbl ;' +
+        'foaf:name ?name .' +
+        '?name bif:contains "\'' + companyName + '\'"@en',
+        //'?lbl bif:contains "'Amgen'"@en  .'
+        'FILTER( langMatches(lang(?description),"en") )',
+        '}'
+    ].join(' ')) + '&format=json';
+
+    request.get(qString, (error, response, body) => {
+        let results = JSON.parse(body).results.bindings;
+        if (results.length == 0 && companyName.toLowerCase()(''))
+            res.send(JSON.stringify(JSON.parse(body).results.bindings, null, 2));
+    });
 });
 
 stockBroker.get('/currencyconverter/:from/:to/:amount', (req, res) => {

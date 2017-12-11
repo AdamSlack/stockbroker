@@ -69,6 +69,25 @@
         </div>
     </div>
 
+    <div class="component company-info">
+        <div *ngIf="selectedTrade">
+            <div *ngIf="companyInfo">
+                <div class="company-info-title">
+                    <a href="{{companyInfo.iri.value}}">{{companyInfo.name.value}}</a>
+                </div>
+                <div class="company-info-desc">
+                    {{companyInfo.description.value}}}
+                </div>
+            </div>
+            <div *ngIf="!companyInfo" class="company-info-title">
+                No Company Info Available
+            </div>
+        </div>
+        <div *ngIf="!selectedTrade" class="company-info-title">
+            Please Select a Trade to view company Information.
+        </div>
+    </div>
+
     <div class="component">
         <div class="chart">
             <svg #chart></svg>
@@ -144,4 +163,7 @@
             </div>
         </div>
     </div>
+
+
+
 </div>

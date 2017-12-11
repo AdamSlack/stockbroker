@@ -36,6 +36,13 @@ export class StockQueryService {
     return this.http.get(url);
   }
 
+  public requestCompanyInformation(companyName : string) : Observable<Array<any>>{
+    let url = this.ROOT + '/semantic/' + companyName;
+    console.log('url');
+
+    return this.http.get<Array<any>>(url);
+  }
+
   public requestTrades(options :{stockID?: string}) : Observable<any> {
     let url = this.ROOT + '/tradingblock/trades';
     if(options.stockID) {

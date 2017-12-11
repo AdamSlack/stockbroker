@@ -22,6 +22,9 @@ export class StockViewerComponent implements OnInit {
   private stockSubscription : Subscription;
   private stockCodeSubscription : Subscription;
   private stockPurchaseSubscription: Subscription;
+  private companyDetailsSubscription: Subscription;
+
+  public companyInfo : any;
 
   public searching : boolean = true;
   public searchFocused : boolean = false;
@@ -47,6 +50,7 @@ export class StockViewerComponent implements OnInit {
     public selectTrade (trade : any) {
         console.log(trade);
         this.selectedTrade = trade;
+        this.requestCompanyInfo();
     }
     
     public fillQuery(query : string) {
@@ -77,6 +81,19 @@ export class StockViewerComponent implements OnInit {
         var cumulative = [];
         this.dataset = this.close.map((v,idx,) => {
             return {close: parseFloat(v), date: this.dates[idx]}
+        });
+    }
+
+    public requestCompanyInfo() {
+        if (this.companyDetailsSubscription) {
+            this.companyDetailsSubscription.unsubscribe();
+        }
+        this.companyDetailsSubscription = this.stockQuery.requestCompanyInformation(this.selectedTrade.companyName).subscribe((res) => {
+            if(res.length == 0) {
+                this.companyInfo = undefined;
+                return;
+            }
+            this.companyInfo = res[0];
         });
     }
 
