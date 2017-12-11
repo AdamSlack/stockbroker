@@ -10,7 +10,7 @@ public class CurrencyConverterPublisher {
 		String addr = new String("http://localhost");
 		
 		System.out.println("Running Server on: " + addr + " on port: " + port );
-		Endpoint.publish(addr + ":" + port + "/CurrencyConverter", new CurrencyConverterImpl());
+		Endpoint.publish(addr + ":" + port + "/currencyconverter", new CurrencyConverterImpl());
 	}
 	
 }
