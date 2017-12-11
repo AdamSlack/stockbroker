@@ -12,16 +12,21 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import javax.jws.WebService;
+import javax.jws.WebParam;
 
 @WebService(endpointInterface="DOCwebServices.CurrencyConverter")
 public class CurrencyConverterImpl implements CurrencyConverter{
-    public float convertCurrency(String from, String to, Float amount) {
+
+    public double convertCurrency(@WebParam(name="from") String from, @WebParam(name="to") String to,@WebParam(name="amount") double amount) {
         System.out.println("Base Currency: " + from);
         System.out.println("Goal Currency: " + to);
-        System.out.println("Amount: " + amount.toString());
+        System.out.println("Amount: " + amount);
         CurrencyConversionWS conveter = new CurrencyConversionWS();
-        
-        return 0.00f;
+        double rate = conveter.GetConversionRate(from, to);
+        System.out.println("Rate: " + rate);
+        double newAmount = amount*rate;
+        System.out.println(from + ": " + amount + " = " + to + ": " + newAmount);
+        return newAmount;
     }
     
 }

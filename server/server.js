@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 const sparql = require('sparql');
 const util = require('util');
 const fs = require('fs');
+const soap = require('soap');
 
 //const jwt = require('jsonwebtoken');
 const config = require('./config');
@@ -186,6 +187,42 @@ stockBroker.get('/stockbroker/stockdata/:granularity/:stockID', (req, res) => {
     });
 
 });
+
+stockBroker.get('/currencyconverter/:from/:to/:amount', (req, res) => {
+    var from = req.params.from;
+    var to = req.params.to;
+    var amount = req.params.amount;
+    console.log('Currency Conversion');
+
+    var wsdl = 'http://localhost:8082/CurrencyConverter?wsdl';
+    var args = { from: from, to: to, amount: amount };
+
+    let results = {};
+
+    soap.createClient(wsdl, function(err, client) {
+        //var description = client.describe();
+        //console.log(util.inspect(description));
+        console.log('Soap Client created.');
+        client.convertCurrency(args, function(err, result) {
+            console.log(result);
+            if (result.return == -1) {
+                results.err = 'Unable to covert between currencies.'
+            } else {
+                results = {
+                    original: {
+                        currency: from,
+                        amount: amount
+                    },
+                    converted: {
+                        currency: to,
+                        amount: result.return
+                    }
+                }
+            }
+            res.send(JSON.stringify(results, null, 2))
+        });
+    });
+})
 
 stockBroker.get('/stockbroker/stockcodes/:stockID?', (req, res) => {
     console.log('Request for possible Stock Codes')
