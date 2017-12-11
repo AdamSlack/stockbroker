@@ -205,7 +205,7 @@ stockBroker.get('/currencyconverter/:from/:to/:amount', (req, res) => {
         console.log('Soap Client created.');
         client.convertCurrency(args, function(err, result) {
             console.log(result);
-            if (result.return == -1) {
+            if (result.return < 0) {
                 results.err = 'Unable to covert between currencies.'
             } else {
                 results = {

@@ -8,11 +8,24 @@ package DOCwebServices;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.io.BufferedReader;
+import java.io.Console;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+
 /**
  *
  * @author taha-m
  */
 public class CurrencyConversionWS {
+
+    private final String USER_AGENT = "Mozilla/5.0";    
 
     public enum ExRate {
         AED ("UAE Dirham", 0.168577),
@@ -77,10 +90,36 @@ public class CurrencyConversionWS {
         String curName()   { return curName; }
     }
 
+    double parseAPIString(String str, String base, String to) {
+        System.out.println(str);
+        // expected format.
+        // {"base":"GBP","date":"2017-12-08","rates":{"CAD":1.722}}
+        int baseIdx = str.indexOf(base);
+        int toIdx = str.indexOf(to);
+        if( baseIdx < 0 || toIdx < 0) {
+            return -1;
+        }
+        String rateString = str.substring(toIdx);
+        // Expected format.
+        // CAD":1.722}}
+        System.out.println(rateString);
+        String rate = rateString.split(":")[1].split("}")[0];
+        return Double.parseDouble(rate);
+    }
+
     public double GetConversionRate(String cur1, String cur2) {
         try {
             double rate1 = ExRate.valueOf(cur1).rateInGBP;
             double rate2 = ExRate.valueOf(cur2).rateInGBP;
+            ArrayList<String> res = HTTPGet("https://api.fixer.io/latest?base=" + cur1 + "&symbols=" + cur2);
+            String jsonString = "";
+            for (String str : res) {
+                jsonString += str;
+            }
+            double rate = parseAPIString(jsonString, cur1, cur2);
+            if (rate > 0) {
+                return rate;
+            }
             return rate1/rate2;
         }
         catch (IllegalArgumentException iae) {
@@ -95,4 +134,44 @@ public class CurrencyConversionWS {
         }
         return codes;
     }
+
+    public ArrayList<String> HTTPGet(String url) {
+		ArrayList<String> res = new ArrayList<String>();
+		
+		try {
+			URL obj = new URL(url);
+			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+			// optional default is GET
+			con.setRequestMethod("GET");
+
+			//add request header
+			con.setRequestProperty("User-Agent", USER_AGENT);
+
+			int responseCode = con.getResponseCode();
+			System.out.println("\nSending 'GET' request to URL : " + url);
+			System.out.println("Response Code : " + responseCode);
+
+			BufferedReader in = new BufferedReader(
+			        new InputStreamReader(con.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+
+			while ((inputLine = in.readLine()) != null) {
+				//System.out.println(inputLine.toString());
+				res.add(inputLine.toString());
+
+			}
+			in.close();
+
+			//print result
+
+		}
+		catch(IOException e) {
+			System.out.println(e);
+		}
+			 	
+		return res;
+
+	}
 }
