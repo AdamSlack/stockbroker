@@ -15,8 +15,9 @@ import java.net.URL;
 import java.util.ArrayList;
 
 /**
- *
+ * ExRate
  * @author taha-m
+ * @Extended AdamSlack
  */
 public class CurrencyConversionWS {
 
