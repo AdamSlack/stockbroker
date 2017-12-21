@@ -14,6 +14,8 @@ The Stockbroker is a Node.js service that primarily consumes other services to p
 
 It consumes the [AlphaVantage](https://www.alphavantage.co/) realtime stock service to allow users of the stockbroker system to take up-to-date statistics into account when buying/selling stocks on the trading block.
 
+The API links stock data to the semantic web through DBpedia. SPARQL queries are issued to retrieve company information for each stock.
+
 The stockbroker system consumes the Python implemented Trading Block service to provide users the ability to buy and sell stocks.
 
 The stockbroker provides clients access to the service through a REST API.
@@ -21,10 +23,13 @@ The stockbroker provides clients access to the service through a REST API.
 ### Stockbroker Client
 The client for the system is implemented as an Angular 4/5 web app. It serves as an example of some of the things that can be done using the Stockbroker Service.
 
+### Currency Converter
+The Currency Converter is a Java SOAP service that allows clients to request an amount in one currency to be converted to the equivalent amount in another currency. It has static conversion rates, supported by an consumed real-time currency conversion REST service. 
+
 ## How To:
 
 ### Requirements
-In order to utilise this system you will need `Python 3.x`, `Node.js 8.x`, and `Angular/cli 5.x`
+In order to utilise this system you will need `Python 3.x`, `Node.js 8.x`, `java 8` and `Angular/cli 5.x` 
 
 **Trading Block** additional Python libraries:
 ```
@@ -50,4 +55,18 @@ To run each element of the system, from the directory of each element enter the 
 
 **Client App:** `ng serve`
 
+**Currency Conversion**
+
+To build from a unix command line:
+```
+cd CurrencyConverter/src/DOCwebServices
+javac *.java
+cd ..
+javac CurrencyConverterPublisher.java
+```
+
+To run after building:
+```
+java CurrencyConverterPublisher
+```
 
