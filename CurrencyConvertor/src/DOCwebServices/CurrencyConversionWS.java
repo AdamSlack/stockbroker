@@ -1,10 +1,5 @@
 package DOCwebServices;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,8 +15,9 @@ import java.net.URL;
 import java.util.ArrayList;
 
 /**
- *
+ * ExRate
  * @author taha-m
+ * @Extended AdamSlack
  */
 public class CurrencyConversionWS {
 
