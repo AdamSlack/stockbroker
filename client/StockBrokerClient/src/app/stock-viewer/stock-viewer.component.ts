@@ -4,6 +4,8 @@ import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
 import { StockQueryService } from '../services/stock-query.service';
 import { Observable, Subscription } from 'rxjs';
 import * as d3 from 'd3';
+import { delay } from 'rxjs/operators/delay';
+import { request } from 'http';
 @Component({
   selector: 'app-stock-viewer',
   templateUrl: './stock-viewer.component.html',
@@ -28,7 +30,8 @@ export class StockViewerComponent implements OnInit {
 
   public searching : boolean = true;
   public searchFocused : boolean = false;
-    
+  public suggestionFocused : boolean = false;
+
   public dates : string[] = [];
   public open : string[] = [];
   public high : string[] = [];
@@ -50,18 +53,30 @@ export class StockViewerComponent implements OnInit {
     public selectTrade (trade : any) {
         console.log(trade);
         this.selectedTrade = trade;
-        this.requestCompanyInfo();
+        this.query = trade.stockID;
+        this.requestCompanyInfo(this.selectedTrade.companyName);
+        this.search()
     }
     
-    public fillQuery(query : string) {
-        console.log(query);
+    public fillQuery(query : string, company: string) {
+        console.log('Selected Autocompletion: ' + query);
         this.query = query;
+        this.setSuggestionFocus(false);
+        this.setSearchFocus(false);
+        this.requestCompanyInfo(company);
         this.search();
+        
     }
     
-    public searchFocus() {
-        this.searchFocused = !this.searchFocused;
-    }    
+    public setSearchFocus(state : boolean) {
+        if(!this.suggestionFocused){
+            this.searchFocused = state;            
+        }
+    }  
+    
+    public setSuggestionFocus(state : boolean) {
+        this.suggestionFocused = state;
+    }
     
     public requestStockCodes() : void {
         if (this.stockCodeSubscription) {
@@ -84,11 +99,11 @@ export class StockViewerComponent implements OnInit {
         });
     }
 
-    public requestCompanyInfo() {
+    public requestCompanyInfo(companyName: string) {
         if (this.companyDetailsSubscription) {
             this.companyDetailsSubscription.unsubscribe();
         }
-        this.companyDetailsSubscription = this.stockQuery.requestCompanyInformation(this.selectedTrade.companyName).subscribe((res) => {
+        this.companyDetailsSubscription = this.stockQuery.requestCompanyInformation(companyName).subscribe((res) => {
             if(res.length == 0) {
                 this.companyInfo = undefined;
                 return;
@@ -123,6 +138,7 @@ export class StockViewerComponent implements OnInit {
             this.stockSubscription.unsubscribe();
         }
         if(this.query.length > 0) {
+            console.log('Requesting Stock Data for: ' + this.query )
             this.stockSubscription = this.stockQuery.requestStock(this.query, 'TIME_SERIES_DAILY').subscribe((res) => {
                 let data = res['data'];
                 let data_keys = Object.keys(data);
@@ -142,7 +158,9 @@ export class StockViewerComponent implements OnInit {
         this.tradeSubscription = this.stockQuery.requestTrades(this.query.length != 0 ? {stockID: this.query} : {}).subscribe((res) => {
             this. trades = res['data'].trades;
             this.searching = false;
-        })
+        });
+
+        
     }
 
     public buildChart(){

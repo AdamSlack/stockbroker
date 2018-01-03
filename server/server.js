@@ -215,21 +215,27 @@ stockBroker.get('/stockbroker/stockdata/:granularity/:stockID', (req, res) => {
     var granularity = req.params.granularity;
     var url = ALPHAVANTAGE + '/query?function=' + granularity + '&symbol=' + stockID + '&apikey=' + APIKEY + '&datatype=json';
 
+    console.log('Request for Stock data: ' + stockID)
+
     var results = {
         'stockID': stockID,
         'granularity': granularity,
         'url': url,
-        'data': '',
+        'data': [],
         'err': ''
     }
 
     request(url, (error, response, body) => {
+        console.log('Alpha Vantage Queried for stock data: ' + stockID)
         if (error) {
+            console.log('Error Querying Alpha Vantage: ' + stockID)
             results.err = error;
         }
         if (response && response.statusCode) {
+            console.log('Processing Response from Alpha Vantage: ' + stockID)
             results.data = JSON.parse(body);
         }
+        console.log('Length of Parsed result data: ' + results.data.length);
         res.send(JSON.stringify(results, null, 2));
     });
 
@@ -237,7 +243,7 @@ stockBroker.get('/stockbroker/stockdata/:granularity/:stockID', (req, res) => {
 
 stockBroker.get('/semantic/:companyName', (req, res) => {
     var companyName = req.params.companyName;
-    console.log(companyName);
+    console.log('Information Request for: ' + companyName);
 
     var qString = 'http://dbpedia.org/sparql?query=' + encodeURIComponent([
         'PREFIX dbpedia-owl: <http://dbpedia.org/ontology/>',
@@ -254,9 +260,18 @@ stockBroker.get('/semantic/:companyName', (req, res) => {
     ].join(' ')) + '&format=json';
 
     request.get(qString, (error, response, body) => {
+        console.log('Query Issued for: ' + companyName);
+        
         let results = JSON.parse(body).results.bindings;
-        if (results.length == 0 && companyName.toLowerCase()(''))
-            res.send(JSON.stringify(JSON.parse(body).results.bindings, null, 2));
+
+        console.log('Query Results parsed for: ' + companyName)
+        if (results.length == 0 && companyName == '') {
+            console.log('Problem occured for: ' + companyName)
+            res.send(error);
+        }
+        console.log('Sending Query Results to client: ' + companyName)
+        res.send(JSON.stringify(results, null, 2));
+
     });
 });
 
@@ -308,4 +323,4 @@ stockBroker.get('/stockbroker/stockcodes/:stockID?', (req, res) => {
 });
 
 stockBroker.listen(8080);
-console.log('Running on: localhost:8080')
+console.log('Running on: localhost:8080');

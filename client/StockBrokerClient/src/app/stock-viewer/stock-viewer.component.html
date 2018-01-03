@@ -1,11 +1,11 @@
 <div class="page">
     <div class="component">
         <div class="search">
-            <input class="bar" type="text" [(ngModel)]=query (keyup)="search();requestStockCodes();" placeholder="Search for a stock." (focus)=searchFocus() (focusout)=searchFocus()>
+            <input class="bar" type="text" [(ngModel)]=query (keyup)="search();requestStockCodes();" placeholder="Search for a stock." (focus)=setSearchFocus(true) (focusout)=setSearchFocus(false)>
         </div>
-        <div *ngIf="stockCodes.length > 0 && searchFocused" class="autocomplete">
+        <div *ngIf="stockCodes.length > 0 && searchFocused" class="autocomplete" (mouseenter)="setSuggestionFocus(true)" (mouseleave)="setSuggestionFocus(false)">
             <table>
-                <tr *ngFor="let code of stockCodes" class="suggestion" (click)=fillQuery(code.code)>
+                <tr *ngFor="let code of stockCodes" class="suggestion" (click)="fillQuery(code.code, code.company)">
                     <td>
                         {{code.code}}
                     </td>
