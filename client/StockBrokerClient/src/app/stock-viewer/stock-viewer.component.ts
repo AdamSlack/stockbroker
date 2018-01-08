@@ -5,7 +5,7 @@ import { StockQueryService } from '../services/stock-query.service';
 import { Observable, Subscription } from 'rxjs';
 import * as d3 from 'd3';
 import { delay } from 'rxjs/operators/delay';
-import { request } from 'http';
+
 @Component({
   selector: 'app-stock-viewer',
   templateUrl: './stock-viewer.component.html',
