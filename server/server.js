@@ -261,8 +261,13 @@ stockBroker.get('/semantic/:companyName', (req, res) => {
 
     request.get(qString, (error, response, body) => {
         console.log('Query Issued for: ' + companyName);
-        
-        let results = JSON.parse(body).results.bindings;
+        let results = {};
+        try {
+            results = JSON.parse(body).results.bindings;
+        }
+        catch(err) {
+            results = {'err': 'Error Parsing Semantic Results'};
+        }
 
         console.log('Query Results parsed for: ' + companyName)
         if (results.length == 0 && companyName == '') {
