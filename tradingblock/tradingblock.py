@@ -2,6 +2,7 @@ import xmlschema
 import copy
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qs
+import urllib.request
 import json
 
 class Trade:
@@ -180,7 +181,7 @@ class XMLParser:
     """ XMLParser """
 
     def __init__(self, schema_path):
-        """ Constructor """
+        """ ConstGBPructor """
         self.xs = xmlschema.XMLSchema(schema_path)
 
     def parse_xml(self, path):
@@ -206,6 +207,13 @@ class XMLParser:
 
     def validate(self, path):
         return self.xs.is_valid(path)
+
+def convert_currency(destination, source, value):
+    """ convert between the value of source into the destination currency """
+
+    res = urllib.request.urlopen('http://localhost:8080/currencyconverter/%s/%s/%s' % (source,destination,value)).read()
+    res_json = json.loads(res)
+    return res_json['converted']['amount']
 
 
 def validate_test_xml(xp, path):
@@ -270,16 +278,17 @@ class TradingBlock(BaseHTTPRequestHandler):
         if comp_len == 1:
             self.send_response(200)
             print('BODY:', body)
+            value = convert_currency('USD',body['currency'], float(body['value']))
             new_trade = Trade(
                 company_name=body['companyName'],
                 stock_id=body['stockID'],
                 available_shares=int(body['amountAvailable']),
-                price=Price(value=float(body['value']), currency=body['currency']),
+                price=Price(value=value, currency='USD'),
                 owner=body['owner']
             )
             self.add_trade(new_trade)
             print(new_trade.jsonise())
-            return new_trade.jsonise();
+            return new_trade.jsonise()
 
         if comp_len == 2 and components[1] == 'buy_order':
             self.send_response(200)

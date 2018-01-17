@@ -104,6 +104,9 @@ public class CurrencyConversionWS {
     }
 
     public double GetConversionRate(String cur1, String cur2) {
+        if(cur1.equals(cur2)) {
+            return 1.0;
+        }
         try {
             double rate1 = ExRate.valueOf(cur1).rateInGBP;
             double rate2 = ExRate.valueOf(cur2).rateInGBP;

@@ -282,7 +282,7 @@ stockBroker.get('/semantic/:companyName', (req, res) => {
 
 stockBroker.get('/currencyconverter/:from/:to/:amount', (req, res) => {
     var from = req.params.from;
-    var to = req.params.to;t
+    var to = req.params.to;
     var amount = req.params.amount;
     console.log('Currency Conversion');
 
