@@ -104,7 +104,7 @@ export class StockViewerComponent implements OnInit {
     public convertCurrency(trade_idx, to_curr, from_curr, value) {
         console.log('converting currency')
         this.stockQuery.convertCurrency(to_curr, from_curr, value).subscribe((res) => {
-            this.trades[trade_idx].viewPrice = res.converted.amount;
+            this.trades[trade_idx].viewPrice = parseFloat(res.converted.amount).toFixed(2);
         });
     }
 
@@ -168,7 +168,7 @@ export class StockViewerComponent implements OnInit {
             this.trades = res['data'].trades;
             this.trades.map((trade, idx) => {
                 trade['viewCurrency'] = this.selectedCurrency;
-                trade['viewPrice'] = trade.price.value
+                trade['viewPrice'] = parseFloat(trade.price.value).toFixed(2)
                 this.convertCurrency(idx, this.selectedCurrency, trade.price.currency, trade.price.value);
                 return trade;
             });
@@ -255,7 +255,7 @@ export class StockViewerComponent implements OnInit {
         this.tradeSubscription = this.stockQuery.requestTrades({stockID: ''}).subscribe((res) => {
             this.trades = res['data'].trades.map((trade) => {
                 trade['viewCurrency'] = this.selectedCurrency;
-                trade['viewPrice'] = trade.price.value;
+                trade['viewPrice'] = parseFloat(trade.price.value).toFixed(2);
                 return trade;
             });
             
