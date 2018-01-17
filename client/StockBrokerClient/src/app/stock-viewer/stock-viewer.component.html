@@ -3,6 +3,9 @@
         <div class="search">
             <input class="bar" type="text" [(ngModel)]=query (keyup)="search();requestStockCodes();" placeholder="Search for a stock." (focus)=setSearchFocus(true) (focusout)=setSearchFocus(false)>
         </div>
+        <div class="search">
+            <input class="bar" type="text" [(ngModel)]=selectedCurrency (keyup)="search()" placeholder="Currency to display stocks in">
+        </div>
         <div *ngIf="stockCodes.length > 0 && searchFocused" class="autocomplete" (mouseenter)="setSuggestionFocus(true)" (mouseleave)="setSuggestionFocus(false)">
             <table>
                 <tr *ngFor="let code of stockCodes" class="suggestion" (click)="fillQuery(code.code, code.company)">
@@ -48,10 +51,10 @@
                         {{ trade.companyName }}
                     </td>
                     <td class="trade-element currency">
-                        {{ trade.price.currency }}
+                        {{ trade.viewCurrency }}
                     </td>
                     <td class="trade-element value">
-                        {{ trade.price.value }}
+                        {{trade.viewPrice}}
                     </td>
                     <td class="trade-element available-shares">
                         {{ trade.availableShares }}

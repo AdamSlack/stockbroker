@@ -41,6 +41,8 @@ export class StockViewerComponent implements OnInit {
 
   public query : string = '';
   
+  public selectedCurrency = 'USD'
+
   private child : ElementRef;
   
   @ViewChild('chart') chart: ElementRef;
@@ -96,6 +98,13 @@ export class StockViewerComponent implements OnInit {
         var cumulative = [];
         this.dataset = this.close.map((v,idx,) => {
             return {close: parseFloat(v), date: this.dates[idx]}
+        });
+    }
+
+    public convertCurrency(trade_idx, to_curr, from_curr, value) {
+        console.log('converting currency')
+        this.stockQuery.convertCurrency(to_curr, from_curr, value).subscribe((res) => {
+            this.trades[trade_idx].viewPrice = res.converted.amount;
         });
     }
 
@@ -156,7 +165,13 @@ export class StockViewerComponent implements OnInit {
         }
         this.searching = true;
         this.tradeSubscription = this.stockQuery.requestTrades(this.query.length != 0 ? {stockID: this.query} : {}).subscribe((res) => {
-            this. trades = res['data'].trades;
+            this.trades = res['data'].trades;
+            this.trades.map((trade, idx) => {
+                trade['viewCurrency'] = this.selectedCurrency;
+                trade['viewPrice'] = trade.price.value
+                this.convertCurrency(idx, this.selectedCurrency, trade.price.currency, trade.price.value);
+                return trade;
+            });
             this.searching = false;
         });
 
@@ -238,8 +253,13 @@ export class StockViewerComponent implements OnInit {
     ngOnInit() {
         this.stockSubscription = this.stockQuery.requestStock('amg', 'TIME_SERIES_DAILY').subscribe();
         this.tradeSubscription = this.stockQuery.requestTrades({stockID: ''}).subscribe((res) => {
-            this. trades = res['data'].trades;
-
+            this.trades = res['data'].trades.map((trade) => {
+                trade['viewCurrency'] = this.selectedCurrency;
+                trade['viewPrice'] = trade.price.value;
+                return trade;
+            });
+            
+            
         });
         this.buildChart();
     }

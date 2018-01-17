@@ -74,6 +74,12 @@ export class StockQueryService {
         }
         return this.http.get(url);
     }
+
+  public convertCurrency(to_curr, from_curr, value : number) : Observable<any> {
+    let url = this.ROOT + '/currencyconverter/' + from_curr +'/'+ to_curr  +'/' + value.toString()
+    
+    return this.http.get(url);
+  }
 }
 
 
