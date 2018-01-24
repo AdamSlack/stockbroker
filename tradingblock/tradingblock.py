@@ -212,7 +212,10 @@ def convert_currency(destination, source, value):
     """ convert between the value of source into the destination currency """
 
     res = urllib.request.urlopen('http://localhost:8080/currencyconverter/%s/%s/%s' % (source,destination,value)).read()
-    res_json = json.loads(res)
+    try:
+        res_json = json.loads(res)
+    except:
+        return value
     return res_json['converted']['amount']
 
 
